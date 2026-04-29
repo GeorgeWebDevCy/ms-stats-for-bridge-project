@@ -81,7 +81,6 @@ $filenames = array(
 	'language'          => 'ms-stats-enrollments-by-language',
 	'progress'          => 'ms-stats-course-progress',
 	'quizzes'           => 'ms-stats-quiz-completion',
-	'logins'            => 'ms-stats-login-activity',
 	'certificates'      => 'ms-stats-certificates',
 	'user_certificates' => 'ms-stats-certificates-per-user',
 );
@@ -222,59 +221,6 @@ if ( 'overview' === $tab ) {
 			$row->total_attempts,
 			$row->passed_attempts,
 			$row->pass_rate ?? 0,
-		) );
-	}
-
-} elseif ( 'logins' === $tab ) {
-
-	$enrolled_users = $wpdb->get_col(
-		"SELECT DISTINCT user_id FROM {$wpdb->prefix}stm_lms_user_courses WHERE 1=1 $date_where_unix" // phpcs:ignore
-	);
-
-	$login_counts = array();
-	$user_data    = array();
-
-	if ( ! empty( $enrolled_users ) ) {
-		$placeholders = implode( ',', array_fill( 0, count( $enrolled_users ), '%d' ) );
-
-		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-		$session_rows = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT user_id, meta_value FROM {$wpdb->usermeta}
-				 WHERE meta_key = 'session_tokens' AND user_id IN ($placeholders)",
-				$enrolled_users
-			)
-		);
-		foreach ( $session_rows as $sr ) {
-			$tokens                       = maybe_unserialize( $sr->meta_value );
-			$login_counts[ $sr->user_id ] = is_array( $tokens ) ? count( $tokens ) : 0;
-		}
-		foreach ( $enrolled_users as $uid ) {
-			if ( ! isset( $login_counts[ $uid ] ) ) {
-				$login_counts[ $uid ] = 0;
-			}
-		}
-		arsort( $login_counts );
-
-		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-		$users = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT ID, display_name, user_email FROM {$wpdb->users} WHERE ID IN ($placeholders)",
-				$enrolled_users
-			)
-		);
-		foreach ( $users as $u ) {
-			$user_data[ $u->ID ] = $u;
-		}
-	}
-
-	fputcsv( $out, array( 'User', 'Email', 'Active Sessions' ) );
-	foreach ( $login_counts as $uid => $count ) {
-		$u = $user_data[ $uid ] ?? null;
-		fputcsv( $out, array(
-			$u ? $u->display_name : 'User #' . $uid,
-			$u ? $u->user_email : '',
-			$count,
 		) );
 	}
 

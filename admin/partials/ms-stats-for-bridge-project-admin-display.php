@@ -121,7 +121,6 @@ $tabs = array(
 	'language'     => __( 'Enrollments by Language', 'ms-stats-for-bridge-project' ),
 	'progress'     => __( 'Course Progress', 'ms-stats-for-bridge-project' ),
 	'quizzes'      => __( 'Quiz Completion', 'ms-stats-for-bridge-project' ),
-	'logins'       => __( 'Login Activity', 'ms-stats-for-bridge-project' ),
 	'certificates'      => __( 'Certificates', 'ms-stats-for-bridge-project' ),
 	'user_certificates' => __( 'Certificates per User', 'ms-stats-for-bridge-project' ),
 );
@@ -401,78 +400,6 @@ $tabs = array(
 										<?php echo esc_html( $row->pass_rate ?? 0 ); ?>%
 									</div>
 								</td>
-							</tr>
-						<?php endforeach; ?>
-					<?php endif; ?>
-				</tbody>
-			</table>
-
-		<?php elseif ( 'logins' === $active_tab ) : ?>
-
-			<?php
-			$enrolled_users = $wpdb->get_col(
-				"SELECT DISTINCT user_id FROM {$wpdb->prefix}stm_lms_user_courses WHERE 1=1 $date_where_unix" // phpcs:ignore
-			);
-
-			$login_counts = array();
-			$user_data    = array();
-
-			if ( ! empty( $enrolled_users ) ) {
-				$placeholders = implode( ',', array_fill( 0, count( $enrolled_users ), '%d' ) );
-
-				// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-				$session_rows = $wpdb->get_results(
-					$wpdb->prepare(
-						"SELECT user_id, meta_value FROM {$wpdb->usermeta}
-						 WHERE meta_key = 'session_tokens' AND user_id IN ($placeholders)",
-						$enrolled_users
-					)
-				);
-				foreach ( $session_rows as $sr ) {
-					$tokens                       = maybe_unserialize( $sr->meta_value );
-					$login_counts[ $sr->user_id ] = is_array( $tokens ) ? count( $tokens ) : 0;
-				}
-				foreach ( $enrolled_users as $uid ) {
-					if ( ! isset( $login_counts[ $uid ] ) ) {
-						$login_counts[ $uid ] = 0;
-					}
-				}
-				arsort( $login_counts );
-
-				// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-				$users = $wpdb->get_results(
-					$wpdb->prepare(
-						"SELECT ID, display_name, user_email FROM {$wpdb->users} WHERE ID IN ($placeholders)",
-						$enrolled_users
-					)
-				);
-				foreach ( $users as $u ) {
-					$user_data[ $u->ID ] = $u;
-				}
-			}
-			?>
-			<p><a href="<?php echo esc_url( ms_stats_export_url( 'logins' ) ); ?>" class="button button-secondary">&#11015; Export to CSV</a></p>
-			<h2><?php esc_html_e( 'Login Sessions per Enrolled User', 'ms-stats-for-bridge-project' ); ?></h2>
-			<p style="color:#50575e;"><?php esc_html_e( 'Count of active/recent login sessions stored by WordPress (session_tokens). Date filter applies to enrollment start date.', 'ms-stats-for-bridge-project' ); ?></p>
-			<table class="wp-list-table widefat fixed striped">
-				<thead>
-					<tr>
-						<th><?php esc_html_e( 'User', 'ms-stats-for-bridge-project' ); ?></th>
-						<th><?php esc_html_e( 'Email', 'ms-stats-for-bridge-project' ); ?></th>
-						<th style="width:140px;"><?php esc_html_e( 'Active Sessions', 'ms-stats-for-bridge-project' ); ?></th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php if ( empty( $login_counts ) ) : ?>
-						<tr><td colspan="3"><?php esc_html_e( 'No data.', 'ms-stats-for-bridge-project' ); ?></td></tr>
-					<?php else : ?>
-						<?php foreach ( $login_counts as $uid => $count ) :
-							$u = $user_data[ $uid ] ?? null;
-							?>
-							<tr>
-								<td><?php echo esc_html( $u ? $u->display_name : 'User #' . $uid ); ?></td>
-								<td><?php echo esc_html( $u ? $u->user_email : '—' ); ?></td>
-								<td><?php echo esc_html( $count ); ?></td>
 							</tr>
 						<?php endforeach; ?>
 					<?php endif; ?>
