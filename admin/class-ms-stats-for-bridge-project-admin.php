@@ -96,7 +96,7 @@ class Ms_Stats_For_Bridge_Project_Admin {
 			.ms-stats-tab-panel table.ms-stats-table{border-collapse:collapse;width:100%!important;}
 			.ms-stats-tab-panel table.ms-stats-table thead{display:table-header-group!important;visibility:visible!important;}
 			.ms-stats-tab-panel table.ms-stats-table thead tr{display:table-row!important;}
-			.ms-stats-tab-panel table.ms-stats-table thead th,.ms-stats-tab-panel table.ms-stats-table thead td{display:table-cell!important;visibility:visible!important;background:{$primary}!important;color:#fff!important;border:none!important;font-weight:600;padding:10px 14px!important;font-size:12px;text-transform:uppercase;letter-spacing:.4px;}
+			.ms-stats-tab-panel table.ms-stats-table thead th,.ms-stats-tab-panel table.ms-stats-table thead td{display:table-cell!important;visibility:visible!important;background:#f3f4f6!important;color:#111827!important;border:none!important;border-bottom:2px solid {$primary}!important;font-weight:700;padding:10px 14px!important;font-size:12px;text-transform:uppercase;letter-spacing:.4px;}
 			.ms-stats-tab-panel table.ms-stats-table thead th.dt-orderable-asc .dt-column-order::before,.ms-stats-tab-panel table.ms-stats-table thead th.dt-orderable-desc .dt-column-order::after{opacity:.6;}
 			.ms-stats-tab-panel table.ms-stats-table tbody td{display:table-cell!important;padding:9px 14px!important;border-bottom:1px solid #f0f0f0!important;font-size:13px;}
 			.ms-stats-tab-panel table.ms-stats-table tbody tr:nth-child(even) td{background:#f9fafb;}
@@ -150,22 +150,52 @@ class Ms_Stats_For_Bridge_Project_Admin {
 		}
 
 		if ( $logo_url ) {
-			$upload_dir = wp_upload_dir();
-			$local_path = str_replace(
-				array( $upload_dir['baseurl'], get_site_url() ),
-				array( $upload_dir['basedir'], ABSPATH ),
-				$logo_url
-			);
-			if ( file_exists( $local_path ) ) {
-				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-				$raw       = file_get_contents( $local_path );
-				$mime      = mime_content_type( $local_path );
-				$logo_fmt  = ( strpos( $mime, 'png' ) !== false ) ? 'PNG' : 'JPEG';
-				$logo_data = 'data:' . $mime . ';base64,' . base64_encode( $raw );
-				$size      = getimagesize( $local_path );
-				if ( $size ) {
-					$logo_w = (int) $size[0];
-					$logo_h = (int) $size[1];
+			// Skip SVG — jsPDF cannot render it.
+			if ( ! preg_match( '/\.svg(\?.*)?$/i', $logo_url ) ) {
+				$upload_dir    = wp_upload_dir();
+				// Normalise protocol so http/https mismatch doesn't break str_replace.
+				$logo_norm     = preg_replace( '#^https?://#i', '//', $logo_url );
+				$base_norm     = preg_replace( '#^https?://#i', '//', $upload_dir['baseurl'] );
+				$site_norm     = preg_replace( '#^https?://#i', '//', get_site_url() );
+				$local_path    = str_replace(
+					array( $base_norm, $site_norm ),
+					array( $upload_dir['basedir'], rtrim( ABSPATH, '/\\' ) ),
+					$logo_norm
+				);
+
+				// Strategy 1: read from local filesystem (fast, no HTTP).
+				if ( file_exists( $local_path ) ) {
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+					$raw = file_get_contents( $local_path );
+					if ( false !== $raw ) {
+						$ext      = strtolower( pathinfo( $local_path, PATHINFO_EXTENSION ) );
+						$mime_map = array( 'png' => 'image/png', 'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'webp' => 'image/webp', 'gif' => 'image/gif' );
+						$mime     = $mime_map[ $ext ] ?? 'image/jpeg';
+						$logo_fmt = ( 'png' === $ext ) ? 'PNG' : ( ( 'webp' === $ext ) ? 'WEBP' : 'JPEG' );
+						$logo_data = 'data:' . $mime . ';base64,' . base64_encode( $raw );
+						$size      = @getimagesize( $local_path ); // phpcs:ignore
+						if ( $size ) {
+							$logo_w = (int) $size[0];
+							$logo_h = (int) $size[1];
+						}
+					}
+				}
+
+				// Strategy 2: HTTP fetch fallback (CDN, external storage, path mismatch).
+				if ( ! $logo_data ) {
+					$response = wp_remote_get( $logo_url, array( 'timeout' => 8, 'sslverify' => false ) );
+					if ( ! is_wp_error( $response ) && 200 === (int) wp_remote_retrieve_response_code( $response ) ) {
+						$raw  = wp_remote_retrieve_body( $response );
+						$mime = strtok( wp_remote_retrieve_header( $response, 'content-type' ), ';' );
+						$mime = trim( $mime );
+						$logo_fmt  = ( false !== strpos( $mime, 'png' ) ) ? 'PNG' : ( ( false !== strpos( $mime, 'webp' ) ) ? 'WEBP' : 'JPEG' );
+						$logo_data = 'data:' . $mime . ';base64,' . base64_encode( $raw );
+						$img_info  = @getimagesizefromstring( $raw ); // phpcs:ignore
+						if ( $img_info ) {
+							$logo_w = (int) $img_info[0];
+							$logo_h = (int) $img_info[1];
+						}
+					}
 				}
 			}
 		}

@@ -129,7 +129,7 @@
 			html:          '#' + tableId,
 			startY:        headerH + 4,
 			theme:         'grid',
-			headStyles:    { fillColor: rgb, textColor: [ 255, 255, 255 ], fontStyle: 'normal', fontSize: 8.5, font: uFont },
+			headStyles:    { fillColor: [ 243, 244, 246 ], textColor: [ 17, 24, 39 ], fontStyle: 'bold', fontSize: 8.5, font: uFont, lineWidth: { bottom: 0.5 }, lineColor: rgb },
 			bodyStyles:    { fontSize: 8, textColor: [ 40, 40, 40 ], font: uFont },
 			alternateRowStyles: { fillColor: [ 246, 247, 249 ] },
 			tableLineColor:  [ 210, 212, 216 ],
