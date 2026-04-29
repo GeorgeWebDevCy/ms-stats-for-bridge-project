@@ -66,16 +66,6 @@
 		} catch ( e ) { /* font load failed, fall back to Helvetica */ }
 	}
 
-	function loadImg( url ) {
-		return new Promise( function ( resolve, reject ) {
-			var img         = new Image();
-			img.crossOrigin = 'anonymous';
-			img.onload      = function () { resolve( img ); };
-			img.onerror     = reject;
-			img.src         = url;
-		} );
-	}
-
 	function fmtYMD( ymd ) {
 		if ( ! ymd ) { return ''; }
 		var p = ymd.split( '-' );
@@ -109,17 +99,12 @@
 		doc.setFillColor( rgb[0], rgb[1], rgb[2] );
 		doc.rect( 0, 0, pageW, headerH, 'F' );
 
-		/* logo — best-effort, skip on CORS failure */
-		if ( cfg.logo ) {
-			try {
-				var img  = await loadImg( cfg.logo );
-				var cv   = document.createElement( 'canvas' );
-				cv.width = img.width; cv.height = img.height;
-				cv.getContext( '2d' ).drawImage( img, 0, 0 );
-				var logoH = 20;
-				var logoW = ( img.width / img.height ) * logoH;
-				doc.addImage( cv.toDataURL( 'image/png' ), 'PNG', pageW - logoW - 10, 7, logoW, logoH );
-			} catch ( e ) { /* logo unavailable, continue */ }
+		/* logo — base64 data URI pre-encoded server-side, no CORS */
+		if ( cfg.logoData && cfg.logoW && cfg.logoH ) {
+			var maxLogoH = 20;
+			var logoH    = maxLogoH;
+			var logoW    = ( cfg.logoW / cfg.logoH ) * logoH;
+			doc.addImage( cfg.logoData, cfg.logoFmt || 'PNG', pageW - logoW - 10, 7, logoW, logoH );
 		}
 
 		/* header text */

@@ -127,16 +127,42 @@ class Ms_Stats_For_Bridge_Project_Admin {
 		$stm     = get_option( 'stm_lms_settings', array() );
 		$primary = ! empty( $stm['main_color'] ) ? sanitize_hex_color( $stm['main_color'] ) : '#385bce';
 
-		// Logo: try MasterStudy PRO setting → WP custom logo → empty.
-		$logo = '';
+		// Logo: resolve URL → local file path → base64 data URI (avoids CORS entirely).
+		$logo_data = '';
+		$logo_w    = 0;
+		$logo_h    = 0;
+		$logo_fmt  = 'PNG';
+
+		$logo_url = '';
 		if ( ! empty( $stm['print_page_logo'] ) ) {
-			$logo = esc_url_raw( $stm['print_page_logo'] );
+			$logo_url = esc_url_raw( $stm['print_page_logo'] );
 		} else {
 			$custom_logo_id = get_theme_mod( 'custom_logo' );
 			if ( $custom_logo_id ) {
 				$logo_src = wp_get_attachment_image_src( $custom_logo_id, 'medium' );
 				if ( $logo_src ) {
-					$logo = esc_url_raw( $logo_src[0] );
+					$logo_url = esc_url_raw( $logo_src[0] );
+				}
+			}
+		}
+
+		if ( $logo_url ) {
+			$upload_dir = wp_upload_dir();
+			$local_path = str_replace(
+				array( $upload_dir['baseurl'], get_site_url() ),
+				array( $upload_dir['basedir'], ABSPATH ),
+				$logo_url
+			);
+			if ( file_exists( $local_path ) ) {
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+				$raw       = file_get_contents( $local_path );
+				$mime      = mime_content_type( $local_path );
+				$logo_fmt  = ( strpos( $mime, 'png' ) !== false ) ? 'PNG' : 'JPEG';
+				$logo_data = 'data:' . $mime . ';base64,' . base64_encode( $raw );
+				$size      = getimagesize( $local_path );
+				if ( $size ) {
+					$logo_w = (int) $size[0];
+					$logo_h = (int) $size[1];
 				}
 			}
 		}
@@ -159,7 +185,10 @@ class Ms_Stats_For_Bridge_Project_Admin {
 			'msStatsConfig',
 			array(
 				'primaryColor' => $primary,
-				'logo'         => $logo,
+				'logoData'     => $logo_data,
+				'logoW'        => $logo_w,
+				'logoH'        => $logo_h,
+				'logoFmt'      => $logo_fmt,
 				'siteName'     => get_bloginfo( 'name' ),
 				'pluginTitle'  => 'MS Stats — Bridge Project',
 				'fontUrl'      => plugin_dir_url( __FILE__ ) . 'fonts/DejaVuSans.ttf',
@@ -181,6 +210,23 @@ class Ms_Stats_For_Bridge_Project_Admin {
 
 	public function display_plugin_admin_page() {
 		require_once plugin_dir_path( __FILE__ ) . 'partials/ms-stats-for-bridge-project-admin-display.php';
+	}
+
+	public function save_settings() {
+		if ( ! isset( $_POST['_ms_stats_nonce'] ) ) {
+			return;
+		}
+		if ( ! wp_verify_nonce( sanitize_key( $_POST['_ms_stats_nonce'] ), 'ms_stats_save_settings' ) ) {
+			return;
+		}
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		if ( isset( $_POST['ms_stats_country_meta_key'] ) ) {
+			update_option( 'ms_stats_country_meta_key', sanitize_key( $_POST['ms_stats_country_meta_key'] ) );
+		}
+		wp_safe_redirect( admin_url( 'admin.php?page=ms-stats-for-bridge-project&tab=settings&saved=1' ) );
+		exit;
 	}
 
 	public function handle_csv_export() {

@@ -121,29 +121,26 @@ if ( 'overview' === $tab ) {
 
 } elseif ( 'countries' === $tab ) {
 
-	$meta_rows = $wpdb->get_results(
+	$country_meta_key = get_option( 'ms_stats_country_meta_key', 'aqdnfaayngf' );
+	$country_rows     = $wpdb->get_results(
 		$wpdb->prepare(
-			"SELECT u.ID AS user_id, um.meta_value
-			 FROM {$wpdb->users} u
-			 INNER JOIN {$wpdb->prefix}stm_lms_user_courses uc ON uc.user_id = u.ID
-			 LEFT JOIN {$wpdb->usermeta} um ON um.user_id = u.ID AND um.meta_key = %s
-			 WHERE 1=1 $date_where_unix
-			 GROUP BY u.ID", // phpcs:ignore
-			'masterstudy_personal_data'
+			"SELECT LOWER(TRIM(um.meta_value)) AS country_val,
+			        COUNT(DISTINCT uc.user_id) AS total
+			 FROM {$wpdb->prefix}stm_lms_user_courses uc
+			 INNER JOIN {$wpdb->usermeta} um
+			        ON um.user_id = uc.user_id AND um.meta_key = %s
+			 WHERE um.meta_value IS NOT NULL
+			   AND TRIM(um.meta_value) != ''
+			   $date_where_unix
+			 GROUP BY country_val
+			 ORDER BY total DESC", // phpcs:ignore
+			$country_meta_key
 		)
 	);
 
-	$country_counts = array();
-	foreach ( $meta_rows as $row ) {
-		$data    = maybe_unserialize( $row->meta_value );
-		$country = ( is_array( $data ) && ! empty( $data['country'] ) ) ? trim( $data['country'] ) : 'Not specified';
-		$country_counts[ $country ] = ( $country_counts[ $country ] ?? 0 ) + 1;
-	}
-	arsort( $country_counts );
-
 	fputcsv( $out, array( 'Country', 'Users' ) );
-	foreach ( $country_counts as $country => $count ) {
-		fputcsv( $out, array( $country, $count ) );
+	foreach ( $country_rows as $row ) {
+		fputcsv( $out, array( mb_convert_case( $row->country_val, MB_CASE_TITLE, 'UTF-8' ), $row->total ) );
 	}
 
 } elseif ( 'language' === $tab ) {

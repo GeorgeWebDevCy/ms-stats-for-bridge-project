@@ -110,6 +110,7 @@ $tabs = array(
 	'quizzes'           => __( 'Quiz Completion', 'ms-stats-for-bridge-project' ),
 	'certificates'      => __( 'Certificates', 'ms-stats-for-bridge-project' ),
 	'user_certificates' => __( 'Certificates per User', 'ms-stats-for-bridge-project' ),
+	'settings'          => __( 'Settings', 'ms-stats-for-bridge-project' ),
 );
 
 $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
@@ -191,24 +192,22 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 		<?php elseif ( 'countries' === $active_tab ) : ?>
 
 			<?php
-			$meta_rows = $wpdb->get_results(
+			$country_meta_key = get_option( 'ms_stats_country_meta_key', 'aqdnfaayngf' );
+			$country_rows     = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT u.ID AS user_id, um.meta_value
-					 FROM {$wpdb->users} u
-					 INNER JOIN {$wpdb->prefix}stm_lms_user_courses uc ON uc.user_id = u.ID
-					 LEFT JOIN {$wpdb->usermeta} um ON um.user_id = u.ID AND um.meta_key = %s
-					 WHERE 1=1 $date_where_unix
-					 GROUP BY u.ID", // phpcs:ignore
-					'masterstudy_personal_data'
+					"SELECT LOWER(TRIM(um.meta_value)) AS country_val,
+					        COUNT(DISTINCT uc.user_id) AS total
+					 FROM {$wpdb->prefix}stm_lms_user_courses uc
+					 INNER JOIN {$wpdb->usermeta} um
+					        ON um.user_id = uc.user_id AND um.meta_key = %s
+					 WHERE um.meta_value IS NOT NULL
+					   AND TRIM(um.meta_value) != ''
+					   $date_where_unix
+					 GROUP BY country_val
+					 ORDER BY total DESC", // phpcs:ignore
+					$country_meta_key
 				)
 			);
-			$country_counts = array();
-			foreach ( $meta_rows as $row ) {
-				$data    = maybe_unserialize( $row->meta_value );
-				$country = ( is_array( $data ) && ! empty( $data['country'] ) ) ? trim( $data['country'] ) : __( 'Not specified', 'ms-stats-for-bridge-project' );
-				$country_counts[ $country ] = ( $country_counts[ $country ] ?? 0 ) + 1;
-			}
-			arsort( $country_counts );
 			?>
 			<?php ms_stats_section_header( __( 'Users by Country', 'ms-stats-for-bridge-project' ), 'ms-stats-table-countries', 'countries' ); ?>
 			<table id="ms-stats-table-countries" class="ms-stats-table widefat">
@@ -217,11 +216,14 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 					<th><?php esc_html_e( 'Users', 'ms-stats-for-bridge-project' ); ?></th>
 				</tr></thead>
 				<tbody>
-					<?php if ( empty( $country_counts ) ) : ?>
+					<?php if ( empty( $country_rows ) ) : ?>
 						<tr><td colspan="2"><?php esc_html_e( 'No data.', 'ms-stats-for-bridge-project' ); ?></td></tr>
 					<?php else : ?>
-						<?php foreach ( $country_counts as $country => $count ) : ?>
-							<tr><td><?php echo esc_html( $country ); ?></td><td><?php echo esc_html( $count ); ?></td></tr>
+						<?php foreach ( $country_rows as $row ) : ?>
+							<tr>
+								<td><?php echo esc_html( mb_convert_case( $row->country_val, MB_CASE_TITLE, 'UTF-8' ) ); ?></td>
+								<td><?php echo esc_html( $row->total ); ?></td>
+							</tr>
 						<?php endforeach; ?>
 					<?php endif; ?>
 				</tbody>
@@ -466,6 +468,33 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 					<?php endif; ?>
 				</tbody>
 			</table>
+
+		<?php elseif ( 'settings' === $active_tab ) : ?>
+
+			<?php if ( isset( $_GET['saved'] ) ) : ?>
+				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Settings saved.', 'ms-stats-for-bridge-project' ); ?></p></div>
+			<?php endif; ?>
+
+			<h2><?php esc_html_e( 'Plugin Settings', 'ms-stats-for-bridge-project' ); ?></h2>
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin.php?page=' . $page_slug . '&tab=settings' ) ); ?>">
+				<?php wp_nonce_field( 'ms_stats_save_settings', '_ms_stats_nonce' ); ?>
+				<table class="form-table" role="presentation">
+					<tr>
+						<th scope="row">
+							<label for="ms_stats_country_meta_key"><?php esc_html_e( 'Country meta key', 'ms-stats-for-bridge-project' ); ?></label>
+						</th>
+						<td>
+							<input type="text" id="ms_stats_country_meta_key" name="ms_stats_country_meta_key"
+							       value="<?php echo esc_attr( get_option( 'ms_stats_country_meta_key', 'aqdnfaayngf' ) ); ?>"
+							       class="regular-text">
+							<p class="description">
+								<?php esc_html_e( 'The usermeta key that stores the enrolled user\'s country. This key may differ across site installs. Default: aqdnfaayngf', 'ms-stats-for-bridge-project' ); ?>
+							</p>
+						</td>
+					</tr>
+				</table>
+				<?php submit_button( __( 'Save Settings', 'ms-stats-for-bridge-project' ) ); ?>
+			</form>
 
 		<?php endif; ?>
 
