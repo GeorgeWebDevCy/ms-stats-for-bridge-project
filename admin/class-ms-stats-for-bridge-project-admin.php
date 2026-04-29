@@ -97,9 +97,13 @@ class Ms_Stats_For_Bridge_Project_Admin {
 			.ms-stats-tab-panel table.ms-stats-table thead{display:table-header-group!important;visibility:visible!important;}
 			.ms-stats-tab-panel table.ms-stats-table thead tr{display:table-row!important;}
 			.ms-stats-tab-panel table.ms-stats-table thead th,.ms-stats-tab-panel table.ms-stats-table thead td{display:table-cell!important;visibility:visible!important;background:#f3f4f6!important;color:#111827!important;border-top:none!important;border-left:none!important;border-right:none!important;border-bottom:2px solid {$primary}!important;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.4px;vertical-align:bottom;}
-			.ms-stats-tab-panel table.ms-stats-table thead th.dt-orderable-asc,.ms-stats-tab-panel table.ms-stats-table thead th.dt-orderable-desc,.ms-stats-tab-panel table.ms-stats-table thead th.dt-ordering-asc,.ms-stats-tab-panel table.ms-stats-table thead th.dt-ordering-desc{padding-right:26px;}
-			.ms-stats-tab-panel table.ms-stats-table thead .dt-column-order{opacity:.5;}
-			.ms-stats-tab-panel table.ms-stats-table thead th.dt-ordering-asc .dt-column-order,.ms-stats-tab-panel table.ms-stats-table thead th.dt-ordering-desc .dt-column-order{opacity:1;color:{$primary};}
+			.ms-stats-tab-panel table.ms-stats-table thead th{white-space:nowrap;}
+			.ms-stats-tab-panel table.ms-stats-table thead th.dt-orderable-asc,.ms-stats-tab-panel table.ms-stats-table thead th.dt-orderable-desc,.ms-stats-tab-panel table.ms-stats-table thead th.dt-ordering-asc,.ms-stats-tab-panel table.ms-stats-table thead th.dt-ordering-desc{padding-right:10px;}
+			.ms-stats-tab-panel table.ms-stats-table thead .dt-column-order{position:relative!important;right:auto!important;top:auto!important;transform:none!important;display:inline-block!important;vertical-align:middle;margin-left:3px;opacity:.4;}
+			.ms-stats-tab-panel table.ms-stats-table thead th.dt-ordering-asc .dt-column-order,.ms-stats-tab-panel table.ms-stats-table thead th.dt-ordering-desc .dt-column-order{opacity:1;}
+			.ms-stats-tab-panel table.ms-stats-table td:first-child,.ms-stats-tab-panel table.ms-stats-table th:first-child{min-width:200px;width:40%;}
+			.ms-stats-tab-panel table.ms-stats-table td:not(:first-child),.ms-stats-tab-panel table.ms-stats-table th:not(:first-child){min-width:80px;width:auto;text-align:center;}
+			.ms-stats-tab-panel table.ms-stats-table td:first-child{text-align:left!important;}
 			.ms-stats-tab-panel table.ms-stats-table tbody td{display:table-cell!important;padding:9px 14px!important;border-bottom:1px solid #f0f0f0!important;font-size:13px;}
 			.ms-stats-tab-panel table.ms-stats-table tbody tr:nth-child(even) td{background:#f9fafb;}
 			.ms-stats-tab-panel table.ms-stats-table tbody tr:hover td{background:{$primary}10!important;}
@@ -138,10 +142,12 @@ class Ms_Stats_For_Bridge_Project_Admin {
 		$logo_h    = 0;
 		$logo_fmt  = 'PNG';
 
-		$logo_url = '';
-		if ( ! empty( $stm['print_page_logo'] ) ) {
+		// Logo priority: plugin PDF setting → MasterStudy PRO → WP custom logo.
+		$logo_url = get_option( 'ms_stats_pdf_logo_url', '' );
+		if ( ! $logo_url && ! empty( $stm['print_page_logo'] ) ) {
 			$logo_url = esc_url_raw( $stm['print_page_logo'] );
-		} else {
+		}
+		if ( ! $logo_url ) {
 			$custom_logo_id = get_theme_mod( 'custom_logo' );
 			if ( $custom_logo_id ) {
 				$logo_src = wp_get_attachment_image_src( $custom_logo_id, 'medium' );
@@ -311,6 +317,9 @@ class Ms_Stats_For_Bridge_Project_Admin {
 		}
 		if ( isset( $_POST['ms_stats_country_meta_key'] ) ) {
 			update_option( 'ms_stats_country_meta_key', sanitize_key( $_POST['ms_stats_country_meta_key'] ) );
+		}
+		if ( isset( $_POST['ms_stats_pdf_logo_url'] ) ) {
+			update_option( 'ms_stats_pdf_logo_url', esc_url_raw( $_POST['ms_stats_pdf_logo_url'] ) );
 		}
 		wp_safe_redirect( admin_url( 'admin.php?page=ms-stats-for-bridge-project&tab=settings&saved=1' ) );
 		exit;

@@ -481,6 +481,27 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 				<table class="form-table" role="presentation">
 					<tr>
 						<th scope="row">
+							<label for="ms_stats_pdf_logo_url"><?php esc_html_e( 'PDF Logo URL', 'ms-stats-for-bridge-project' ); ?></label>
+						</th>
+						<td>
+							<input type="url" id="ms_stats_pdf_logo_url" name="ms_stats_pdf_logo_url"
+							       value="<?php echo esc_attr( get_option( 'ms_stats_pdf_logo_url', '' ) ); ?>"
+							       class="large-text" placeholder="https://example.com/logo.png">
+							<p class="description">
+								<?php esc_html_e( 'PNG or JPEG URL used in PDF exports. Takes priority over the site logo. Copy the URL from your Media Library.', 'ms-stats-for-bridge-project' ); ?>
+							</p>
+							<?php
+							$current_pdf_logo = get_option( 'ms_stats_pdf_logo_url', '' );
+							if ( $current_pdf_logo ) :
+								?>
+								<p style="margin-top:8px;">
+									<img src="<?php echo esc_url( $current_pdf_logo ); ?>" alt="" style="max-height:60px;max-width:200px;border:1px solid #dcdcde;border-radius:4px;padding:4px;background:#fff;">
+								</p>
+							<?php endif; ?>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">
 							<label for="ms_stats_country_meta_key"><?php esc_html_e( 'Country meta key', 'ms-stats-for-bridge-project' ); ?></label>
 						</th>
 						<td>
@@ -488,7 +509,7 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 							       value="<?php echo esc_attr( get_option( 'ms_stats_country_meta_key', 'aqdnfaayngf' ) ); ?>"
 							       class="regular-text">
 							<p class="description">
-								<?php esc_html_e( 'The usermeta key that stores the enrolled user\'s country. This key may differ across site installs. Default: aqdnfaayngf', 'ms-stats-for-bridge-project' ); ?>
+								<?php esc_html_e( 'The usermeta key that stores the enrolled user\'s country. Default: aqdnfaayngf', 'ms-stats-for-bridge-project' ); ?>
 							</p>
 						</td>
 					</tr>
