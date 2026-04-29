@@ -60,32 +60,39 @@ class Ms_Stats_For_Bridge_Project_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Ms_Stats_For_Bridge_Project_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Ms_Stats_For_Bridge_Project_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
+		$screen = get_current_screen();
+		if ( ! $screen || strpos( $screen->id, 'ms-stats-for-bridge-project' ) === false ) {
+			return;
+		}
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/ms-stats-for-bridge-project-admin.css', array(), $this->version, 'all' );
-
+		wp_enqueue_style( 'jquery-ui-style', 'https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.min.css', array(), '1.13.3' );
 	}
 
-	/**
-	 * Register the JavaScript for the admin area.
-	 *
-	 * @since    1.0.0
-	 */
 	public function enqueue_scripts() {
-
+		$screen = get_current_screen();
+		if ( ! $screen || strpos( $screen->id, 'ms-stats-for-bridge-project' ) === false ) {
+			return;
+		}
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/ms-stats-for-bridge-project-admin.js', array( 'jquery' ), $this->version, false );
-
+		wp_enqueue_script( 'jquery-ui-datepicker' );
+		wp_add_inline_script(
+			'jquery-ui-datepicker',
+			"jQuery(function($){
+				$('.ms-stats-datepicker').datepicker({
+					dateFormat:  'dd/mm/yy',
+					changeMonth: true,
+					changeYear:  true,
+					onSelect: function(dateText, inst) {
+						var altField = $(this).data('alt-field');
+						var d = new Date(inst.selectedYear, inst.selectedMonth, inst.selectedDay);
+						var ymd = d.getFullYear() + '-' +
+							String(d.getMonth()+1).padStart(2,'0') + '-' +
+							String(d.getDate()).padStart(2,'0');
+						$(altField).val(ymd);
+					}
+				});
+			});"
+		);
 	}
 
 	public function add_plugin_admin_menu() {

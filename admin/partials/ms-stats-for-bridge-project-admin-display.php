@@ -9,9 +9,11 @@ $active_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'overview';
 $page_slug  = 'ms-stats-for-bridge-project';
 
 // Date range — stored/passed as Y-m-d, converted to unix timestamps for queries.
-$wp_date_format = get_option( 'date_format', 'Y-m-d' );
 $date_from_raw  = isset( $_GET['date_from'] ) ? sanitize_text_field( $_GET['date_from'] ) : '';
 $date_to_raw    = isset( $_GET['date_to'] ) ? sanitize_text_field( $_GET['date_to'] ) : '';
+// Display values in dd/mm/yyyy for the datepicker text inputs.
+$display_from   = $date_from_raw ? date( 'd/m/Y', strtotime( $date_from_raw ) ) : '';
+$display_to     = $date_to_raw ? date( 'd/m/Y', strtotime( $date_to_raw ) ) : '';
 
 $ts_from = $date_from_raw ? strtotime( $date_from_raw . ' 00:00:00' ) : 0;
 $ts_to   = $date_to_raw ? strtotime( $date_to_raw . ' 23:59:59' ) : 0;
@@ -80,10 +82,12 @@ $tabs = array(
 		<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>" style="margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
 			<input type="hidden" name="page" value="<?php echo esc_attr( $page_slug ); ?>">
 			<input type="hidden" name="tab"  value="<?php echo esc_attr( $active_tab ); ?>">
-			<label for="ms_date_from" style="font-weight:600;"><?php esc_html_e( 'From', 'ms-stats-for-bridge-project' ); ?></label>
-			<input type="date" id="ms_date_from" name="date_from" value="<?php echo esc_attr( $date_from_raw ); ?>" style="border:1px solid #c3c4c7;border-radius:3px;padding:4px 8px;">
-			<label for="ms_date_to" style="font-weight:600;"><?php esc_html_e( 'To', 'ms-stats-for-bridge-project' ); ?></label>
-			<input type="date" id="ms_date_to" name="date_to" value="<?php echo esc_attr( $date_to_raw ); ?>" style="border:1px solid #c3c4c7;border-radius:3px;padding:4px 8px;">
+			<label for="ms_date_from_display" style="font-weight:600;"><?php esc_html_e( 'From', 'ms-stats-for-bridge-project' ); ?></label>
+			<input type="text" id="ms_date_from_display" class="ms-stats-datepicker" placeholder="dd/mm/yyyy" autocomplete="off" data-alt-field="#ms_date_from" value="<?php echo esc_attr( $display_from ); ?>" style="width:110px;border:1px solid #c3c4c7;border-radius:3px;padding:4px 8px;">
+			<input type="hidden" id="ms_date_from" name="date_from" value="<?php echo esc_attr( $date_from_raw ); ?>">
+			<label for="ms_date_to_display" style="font-weight:600;"><?php esc_html_e( 'To', 'ms-stats-for-bridge-project' ); ?></label>
+			<input type="text" id="ms_date_to_display" class="ms-stats-datepicker" placeholder="dd/mm/yyyy" autocomplete="off" data-alt-field="#ms_date_to" value="<?php echo esc_attr( $display_to ); ?>" style="width:110px;border:1px solid #c3c4c7;border-radius:3px;padding:4px 8px;">
+			<input type="hidden" id="ms_date_to" name="date_to" value="<?php echo esc_attr( $date_to_raw ); ?>">
 			<button type="submit" class="button"><?php esc_html_e( 'Filter', 'ms-stats-for-bridge-project' ); ?></button>
 			<?php if ( $date_from_raw || $date_to_raw ) : ?>
 				<a href="<?php echo esc_url( $base_url ); ?>" class="button button-link"><?php esc_html_e( 'Clear', 'ms-stats-for-bridge-project' ); ?></a>
