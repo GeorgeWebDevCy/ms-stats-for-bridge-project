@@ -227,6 +227,10 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 						<?php endforeach; ?>
 					<?php endif; ?>
 				</tbody>
+				<tfoot><tr>
+					<th><?php esc_html_e( 'Total', 'ms-stats-for-bridge-project' ); ?></th>
+					<th data-sum-col="1"><?php echo esc_html( array_sum( array_map( fn( $r ) => (int) $r->total, $country_rows ) ) ); ?></th>
+				</tr></tfoot>
 			</table>
 
 		<?php elseif ( 'language' === $active_tab ) : ?>
@@ -254,6 +258,10 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 						<?php endforeach; ?>
 					<?php endif; ?>
 				</tbody>
+				<tfoot><tr>
+					<th><?php esc_html_e( 'Total', 'ms-stats-for-bridge-project' ); ?></th>
+					<th data-sum-col="1"><?php echo esc_html( array_sum( array_map( fn( $r ) => (int) $r->total, $lang_rows ) ) ); ?></th>
+				</tr></tfoot>
 			</table>
 
 		<?php elseif ( 'progress' === $active_tab ) : ?>
@@ -306,6 +314,20 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 						<?php endforeach; ?>
 					<?php endif; ?>
 				</tbody>
+				<?php if ( ! empty( $progress_rows ) ) :
+					$p_enrolled  = array_sum( array_map( fn( $r ) => (int) $r->enrolled, $progress_rows ) );
+					$p_completed = array_sum( array_map( fn( $r ) => (int) $r->completed, $progress_rows ) );
+					$p_avg_prog  = count( $progress_rows ) ? round( array_sum( array_map( fn( $r ) => (float) $r->avg_progress, $progress_rows ) ) / count( $progress_rows ), 1 ) : 0;
+					$p_comp_rate = $p_enrolled > 0 ? round( $p_completed / $p_enrolled * 100, 1 ) : 0;
+				?>
+				<tfoot><tr>
+					<th><?php esc_html_e( 'Total', 'ms-stats-for-bridge-project' ); ?></th>
+					<th data-sum-col="1"><?php echo esc_html( $p_enrolled ); ?></th>
+					<th data-avg-col="2"><?php echo esc_html( $p_avg_prog ); ?>%</th>
+					<th data-sum-col="3"><?php echo esc_html( $p_completed ); ?></th>
+					<th data-rate-cols="3/1"><?php echo esc_html( $p_comp_rate ); ?>%</th>
+				</tr></tfoot>
+				<?php endif; ?>
 			</table>
 
 		<?php elseif ( 'quizzes' === $active_tab ) : ?>
@@ -361,6 +383,22 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 						<?php endforeach; ?>
 					<?php endif; ?>
 				</tbody>
+				<?php if ( ! empty( $quiz_rows ) ) :
+					$q_quizzes   = array_sum( array_map( fn( $r ) => (int) $r->total_quizzes, $quiz_rows ) );
+					$q_attempted = array_sum( array_map( fn( $r ) => (int) $r->users_attempted, $quiz_rows ) );
+					$q_total     = array_sum( array_map( fn( $r ) => (int) $r->total_attempts, $quiz_rows ) );
+					$q_passed    = array_sum( array_map( fn( $r ) => (int) $r->passed_attempts, $quiz_rows ) );
+					$q_rate      = $q_total > 0 ? round( $q_passed / $q_total * 100, 1 ) : 0;
+				?>
+				<tfoot><tr>
+					<th><?php esc_html_e( 'Total', 'ms-stats-for-bridge-project' ); ?></th>
+					<th data-sum-col="1"><?php echo esc_html( $q_quizzes ); ?></th>
+					<th data-sum-col="2"><?php echo esc_html( $q_attempted ); ?></th>
+					<th data-sum-col="3"><?php echo esc_html( $q_total ); ?></th>
+					<th data-sum-col="4"><?php echo esc_html( $q_passed ); ?></th>
+					<th data-rate-cols="4/3"><?php echo esc_html( $q_rate ); ?>%</th>
+				</tr></tfoot>
+				<?php endif; ?>
 			</table>
 
 		<?php elseif ( 'certificates' === $active_tab ) : ?>
@@ -404,6 +442,10 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 						<?php endforeach; ?>
 					<?php endif; ?>
 				</tbody>
+				<tfoot><tr>
+					<th><?php esc_html_e( 'Total', 'ms-stats-for-bridge-project' ); ?></th>
+					<th data-sum-col="1"><?php echo esc_html( array_sum( array_map( fn( $r ) => (int) $r->issued, $cert_rows ) ) ); ?></th>
+				</tr></tfoot>
 			</table>
 
 		<?php elseif ( 'user_certificates' === $active_tab ) : ?>

@@ -23,6 +23,43 @@
 	}
 
 	/* ── DataTables ─────────────────────────────────────────────────── */
+	function numFromCell( val ) {
+		return parseFloat( String( val ).replace( /<[^>]*>/g, ' ' ).replace( /[%,]/g, '' ).trim() ) || 0;
+	}
+
+	function updateFooter( api ) {
+		var $tfoot = $( api.table().node() ).find( 'tfoot tr' );
+		if ( ! $tfoot.length ) { return; }
+
+		/* Sum columns */
+		$tfoot.find( '[data-sum-col]' ).each( function () {
+			var col   = parseInt( $( this ).data( 'sum-col' ), 10 );
+			var total = api.column( col, { search: 'applied' } ).data().reduce( function ( a, b ) {
+				return a + numFromCell( b );
+			}, 0 );
+			$( this ).text( total.toLocaleString() );
+		} );
+
+		/* Average columns */
+		$tfoot.find( '[data-avg-col]' ).each( function () {
+			var col  = parseInt( $( this ).data( 'avg-col' ), 10 );
+			var data = api.column( col, { search: 'applied' } ).data();
+			var sum  = data.reduce( function ( a, b ) { return a + numFromCell( b ); }, 0 );
+			var avg  = data.length ? ( sum / data.length ).toFixed( 1 ) : '0';
+			$( this ).text( avg + '%' );
+		} );
+
+		/* Rate columns: numerator col / denominator col * 100 */
+		$tfoot.find( '[data-rate-cols]' ).each( function () {
+			var parts = String( $( this ).data( 'rate-cols' ) ).split( '/' );
+			var num   = api.column( parseInt( parts[0], 10 ), { search: 'applied' } ).data()
+				.reduce( function ( a, b ) { return a + numFromCell( b ); }, 0 );
+			var den   = api.column( parseInt( parts[1], 10 ), { search: 'applied' } ).data()
+				.reduce( function ( a, b ) { return a + numFromCell( b ); }, 0 );
+			$( this ).text( den > 0 ? ( num / den * 100 ).toFixed( 1 ) + '%' : '0%' );
+		} );
+	}
+
 	function initDataTables() {
 		if ( typeof $.fn.DataTable === 'undefined' ) { return; }
 		$.fn.dataTable.ext.errMode = 'none';
@@ -35,6 +72,9 @@
 				lengthMenu:        'Show _MENU_',
 				info:              '_START_–_END_ of _TOTAL_',
 				paginate: { first: '«', last: '»', next: '›', previous: '‹' }
+			},
+			footerCallback: function () {
+				updateFooter( this.api() );
 			}
 		} );
 	}

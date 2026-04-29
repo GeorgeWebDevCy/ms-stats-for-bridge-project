@@ -115,6 +115,8 @@ class Ms_Stats_For_Bridge_Project_Admin {
 			.ms-stats-tab-panel .dt-paging .dt-paging-button.current,.ms-stats-tab-panel .dt-paging .dt-paging-button.current:hover{background:{$primary}!important;border-color:{$primary}!important;color:#fff!important;}
 			.ms-stats-tab-panel .dt-paging .dt-paging-button:hover{background:{$primary}18!important;border-color:{$primary}!important;color:{$primary}!important;}
 			.ms-stats-tab-panel .dt-info{font-size:12px;color:#50575e;}
+			.ms-stats-tab-panel table.ms-stats-table tfoot th,.ms-stats-tab-panel table.ms-stats-table tfoot td{display:table-cell!important;background:#eef0f3!important;color:#111827!important;font-weight:700!important;border-top:2px solid {$primary}!important;border-bottom:none!important;padding:9px 14px!important;font-size:12px;}
+			.ms-stats-tab-panel table.ms-stats-table tfoot tr:first-child td:first-child,.ms-stats-tab-panel table.ms-stats-table tfoot tr:first-child th:first-child{text-align:left!important;}
 			.ms-stats-bar-wrap{display:flex;align-items:center;gap:8px;}
 			.ms-stats-bar{background:#f0f0f0;border-radius:3px;width:80px;height:10px;overflow:hidden;flex-shrink:0;}
 			.ms-stats-bar-fill{height:100%;border-radius:3px;}
