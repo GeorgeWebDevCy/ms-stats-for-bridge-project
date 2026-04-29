@@ -72,7 +72,7 @@ class Ms_Stats_For_Bridge_Project {
 		} else {
 			$this->version = '1.0.0';
 		}
-		$this->plugin_name = 'ms-stats-for-bridge-project';
+		$this->plugin_name = 'ms-stats';
 
 		$this->load_dependencies();
 		$this->set_locale();

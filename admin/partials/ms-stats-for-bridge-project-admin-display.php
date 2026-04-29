@@ -6,7 +6,7 @@ if ( ! defined( 'WPINC' ) ) {
 global $wpdb;
 
 $active_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'overview';
-$page_slug  = 'ms-stats-for-bridge-project';
+$page_slug  = 'ms-stats';
 
 $date_from_raw = isset( $_GET['date_from'] ) ? sanitize_text_field( $_GET['date_from'] ) : '';
 $date_to_raw   = isset( $_GET['date_to'] ) ? sanitize_text_field( $_GET['date_to'] ) : '';
@@ -85,7 +85,7 @@ function ms_stats_export_url( $tab ) {
 		$extra .= '&cert_user_id=' . (int) $_GET['cert_user_id'];
 	}
 	return wp_nonce_url(
-		admin_url( 'admin.php?page=ms-stats-for-bridge-project&tab=' . rawurlencode( $tab ) . '&export=csv' . $extra ),
+		admin_url( 'admin.php?page=ms-stats&tab=' . rawurlencode( $tab ) . '&export=csv' . $extra ),
 		'ms_stats_export'
 	);
 }
@@ -108,14 +108,14 @@ function ms_stats_section_header( $title, $table_id, $csv_tab ) {
 }
 
 $tabs = array(
-	'overview'          => __( 'Overview', 'ms-stats-for-bridge-project' ),
-	'countries'         => __( 'Users by Country', 'ms-stats-for-bridge-project' ),
-	'language'          => __( 'Enrollments by Language', 'ms-stats-for-bridge-project' ),
-	'progress'          => __( 'Course Progress', 'ms-stats-for-bridge-project' ),
-	'quizzes'           => __( 'Quiz Completion', 'ms-stats-for-bridge-project' ),
-	'certificates'      => __( 'Certificates', 'ms-stats-for-bridge-project' ),
-	'user_certificates' => __( 'Certificates per User', 'ms-stats-for-bridge-project' ),
-	'settings'          => __( 'Settings', 'ms-stats-for-bridge-project' ),
+	'overview'          => __( 'Overview', 'ms-stats' ),
+	'countries'         => __( 'Users by Country', 'ms-stats' ),
+	'language'          => __( 'Enrollments by Language', 'ms-stats' ),
+	'progress'          => __( 'Course Progress', 'ms-stats' ),
+	'quizzes'           => __( 'Quiz Completion', 'ms-stats' ),
+	'certificates'      => __( 'Certificates', 'ms-stats' ),
+	'user_certificates' => __( 'Certificates per User', 'ms-stats' ),
+	'settings'          => __( 'Settings', 'ms-stats' ),
 );
 
 $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
@@ -138,24 +138,24 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 		<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>" class="ms-stats-filter-bar">
 			<input type="hidden" name="page" value="<?php echo esc_attr( $page_slug ); ?>">
 			<input type="hidden" name="tab"  value="<?php echo esc_attr( $active_tab ); ?>">
-			<label for="ms_date_from_display"><?php esc_html_e( 'From', 'ms-stats-for-bridge-project' ); ?></label>
+			<label for="ms_date_from_display"><?php esc_html_e( 'From', 'ms-stats' ); ?></label>
 			<input type="text" id="ms_date_from_display" class="ms-stats-datepicker" placeholder="dd/mm/yyyy" autocomplete="off" data-alt-field="#ms_date_from" value="<?php echo esc_attr( $display_from ); ?>">
 			<input type="hidden" id="ms_date_from" name="date_from" value="<?php echo esc_attr( $date_from_raw ); ?>">
-			<label for="ms_date_to_display"><?php esc_html_e( 'To', 'ms-stats-for-bridge-project' ); ?></label>
+			<label for="ms_date_to_display"><?php esc_html_e( 'To', 'ms-stats' ); ?></label>
 			<input type="text" id="ms_date_to_display" class="ms-stats-datepicker" placeholder="dd/mm/yyyy" autocomplete="off" data-alt-field="#ms_date_to" value="<?php echo esc_attr( $display_to ); ?>">
 			<input type="hidden" id="ms_date_to" name="date_to" value="<?php echo esc_attr( $date_to_raw ); ?>">
 			<?php if ( 'user_certificates' === $active_tab ) : ?>
-				<label for="ms_cert_user"><?php esc_html_e( 'User', 'ms-stats-for-bridge-project' ); ?></label>
+				<label for="ms_cert_user"><?php esc_html_e( 'User', 'ms-stats' ); ?></label>
 				<select id="ms_cert_user" name="cert_user_id" style="border:1px solid #c3c4c7;border-radius:3px;padding:4px 8px;">
-					<option value=""><?php esc_html_e( '— All —', 'ms-stats-for-bridge-project' ); ?></option>
+					<option value=""><?php esc_html_e( '— All —', 'ms-stats' ); ?></option>
 					<?php foreach ( $cert_users as $cu ) : ?>
 						<option value="<?php echo esc_attr( $cu->ID ); ?>" <?php selected( $cert_user_id, $cu->ID ); ?>><?php echo esc_html( $cu->display_name ); ?></option>
 					<?php endforeach; ?>
 				</select>
 			<?php endif; ?>
-			<button type="submit" class="button"><?php esc_html_e( 'Filter', 'ms-stats-for-bridge-project' ); ?></button>
+			<button type="submit" class="button"><?php esc_html_e( 'Filter', 'ms-stats' ); ?></button>
 			<?php if ( $date_from_raw || $date_to_raw || $cert_user_id ) : ?>
-				<a href="<?php echo esc_url( $base_url ); ?>" class="button button-link"><?php esc_html_e( 'Clear', 'ms-stats-for-bridge-project' ); ?></a>
+				<a href="<?php echo esc_url( $base_url ); ?>" class="button button-link"><?php esc_html_e( 'Clear', 'ms-stats' ); ?></a>
 			<?php endif; ?>
 		</form>
 
@@ -188,18 +188,18 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 			}
 			?>
 			<div class="ms-stats-section-header">
-				<h2><?php esc_html_e( 'Enrollment Overview', 'ms-stats-for-bridge-project' ); ?></h2>
+				<h2><?php esc_html_e( 'Enrollment Overview', 'ms-stats' ); ?></h2>
 				<div class="ms-stats-export-buttons">
 					<a href="<?php echo esc_url( ms_stats_export_url( 'overview' ) ); ?>" class="button button-secondary">&#11015; CSV</a>
-					<?php ms_stats_pdf_btn( 'ms-stats-table-overview', __( 'Enrollment Overview', 'ms-stats-for-bridge-project' ) ); ?>
+					<?php ms_stats_pdf_btn( 'ms-stats-table-overview', __( 'Enrollment Overview', 'ms-stats' ) ); ?>
 				</div>
 			</div>
 			<div class="ms-stats-cards">
 				<?php foreach ( array(
-					array( 'label' => __( 'Total Enrollments', 'ms-stats-for-bridge-project' ),       'value' => $total_enrollments ),
-					array( 'label' => __( 'Enrolled Users', 'ms-stats-for-bridge-project' ),          'value' => $total_users ),
-					array( 'label' => __( 'Courses with Enrollments', 'ms-stats-for-bridge-project' ), 'value' => $total_courses ),
-					array( 'label' => __( 'Total Courses (default language)', 'ms-stats-for-bridge-project' ), 'value' => $total_site_courses ),
+					array( 'label' => __( 'Total Enrollments', 'ms-stats' ),       'value' => $total_enrollments ),
+					array( 'label' => __( 'Enrolled Users', 'ms-stats' ),          'value' => $total_users ),
+					array( 'label' => __( 'Courses with Enrollments', 'ms-stats' ), 'value' => $total_courses ),
+					array( 'label' => __( 'Total Courses (default language)', 'ms-stats' ), 'value' => $total_site_courses ),
 				) as $stat ) : ?>
 					<div class="ms-stats-card">
 						<div class="ms-stats-card-value"><?php echo esc_html( $stat['value'] ); ?></div>
@@ -208,12 +208,12 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 				<?php endforeach; ?>
 			</div>
 			<table id="ms-stats-table-overview" class="ms-stats-table widefat" style="display:none;">
-				<thead><tr><th><?php esc_html_e( 'Metric', 'ms-stats-for-bridge-project' ); ?></th><th><?php esc_html_e( 'Value', 'ms-stats-for-bridge-project' ); ?></th></tr></thead>
+				<thead><tr><th><?php esc_html_e( 'Metric', 'ms-stats' ); ?></th><th><?php esc_html_e( 'Value', 'ms-stats' ); ?></th></tr></thead>
 				<tbody>
-					<tr><td><?php esc_html_e( 'Total Enrollments', 'ms-stats-for-bridge-project' ); ?></td><td><?php echo esc_html( $total_enrollments ); ?></td></tr>
-					<tr><td><?php esc_html_e( 'Enrolled Users', 'ms-stats-for-bridge-project' ); ?></td><td><?php echo esc_html( $total_users ); ?></td></tr>
-					<tr><td><?php esc_html_e( 'Courses with Enrollments', 'ms-stats-for-bridge-project' ); ?></td><td><?php echo esc_html( $total_courses ); ?></td></tr>
-					<tr><td><?php esc_html_e( 'Total Courses (default language)', 'ms-stats-for-bridge-project' ); ?></td><td><?php echo esc_html( $total_site_courses ); ?></td></tr>
+					<tr><td><?php esc_html_e( 'Total Enrollments', 'ms-stats' ); ?></td><td><?php echo esc_html( $total_enrollments ); ?></td></tr>
+					<tr><td><?php esc_html_e( 'Enrolled Users', 'ms-stats' ); ?></td><td><?php echo esc_html( $total_users ); ?></td></tr>
+					<tr><td><?php esc_html_e( 'Courses with Enrollments', 'ms-stats' ); ?></td><td><?php echo esc_html( $total_courses ); ?></td></tr>
+					<tr><td><?php esc_html_e( 'Total Courses (default language)', 'ms-stats' ); ?></td><td><?php echo esc_html( $total_site_courses ); ?></td></tr>
 				</tbody>
 			</table>
 
@@ -237,15 +237,15 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 				)
 			);
 			?>
-			<?php ms_stats_section_header( __( 'Users by Country', 'ms-stats-for-bridge-project' ), 'ms-stats-table-countries', 'countries' ); ?>
+			<?php ms_stats_section_header( __( 'Users by Country', 'ms-stats' ), 'ms-stats-table-countries', 'countries' ); ?>
 			<table id="ms-stats-table-countries" class="ms-stats-table widefat">
 				<thead><tr>
-					<th><?php esc_html_e( 'Country', 'ms-stats-for-bridge-project' ); ?></th>
-					<th><?php esc_html_e( 'Users', 'ms-stats-for-bridge-project' ); ?></th>
+					<th><?php esc_html_e( 'Country', 'ms-stats' ); ?></th>
+					<th><?php esc_html_e( 'Users', 'ms-stats' ); ?></th>
 				</tr></thead>
 				<tbody>
 					<?php if ( empty( $country_rows ) ) : ?>
-						<tr><td colspan="2"><?php esc_html_e( 'No data.', 'ms-stats-for-bridge-project' ); ?></td></tr>
+						<tr><td colspan="2"><?php esc_html_e( 'No data.', 'ms-stats' ); ?></td></tr>
 					<?php else : ?>
 						<?php foreach ( $country_rows as $row ) : ?>
 							<tr>
@@ -256,7 +256,7 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 					<?php endif; ?>
 				</tbody>
 				<tfoot><tr>
-					<th><?php esc_html_e( 'Total', 'ms-stats-for-bridge-project' ); ?></th>
+					<th><?php esc_html_e( 'Total', 'ms-stats' ); ?></th>
 					<th data-sum-col="1"><?php echo esc_html( array_sum( array_map( fn( $r ) => (int) $r->total, $country_rows ) ) ); ?></th>
 				</tr></tfoot>
 			</table>
@@ -271,15 +271,15 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 				 GROUP BY lng_code ORDER BY total DESC" // phpcs:ignore
 			);
 			?>
-			<?php ms_stats_section_header( __( 'Enrollments by Language', 'ms-stats-for-bridge-project' ), 'ms-stats-table-language', 'language' ); ?>
+			<?php ms_stats_section_header( __( 'Enrollments by Language', 'ms-stats' ), 'ms-stats-table-language', 'language' ); ?>
 			<table id="ms-stats-table-language" class="ms-stats-table widefat">
 				<thead><tr>
-					<th><?php esc_html_e( 'Language', 'ms-stats-for-bridge-project' ); ?></th>
-					<th><?php esc_html_e( 'Enrollments', 'ms-stats-for-bridge-project' ); ?></th>
+					<th><?php esc_html_e( 'Language', 'ms-stats' ); ?></th>
+					<th><?php esc_html_e( 'Enrollments', 'ms-stats' ); ?></th>
 				</tr></thead>
 				<tbody>
 					<?php if ( empty( $lang_rows ) ) : ?>
-						<tr><td colspan="2"><?php esc_html_e( 'No data.', 'ms-stats-for-bridge-project' ); ?></td></tr>
+						<tr><td colspan="2"><?php esc_html_e( 'No data.', 'ms-stats' ); ?></td></tr>
 					<?php else : ?>
 						<?php foreach ( $lang_rows as $row ) : ?>
 							<tr><td><?php echo esc_html( ms_stats_locale_name( $row->lng_code ) ); ?></td><td><?php echo esc_html( $row->total ); ?></td></tr>
@@ -287,7 +287,7 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 					<?php endif; ?>
 				</tbody>
 				<tfoot><tr>
-					<th><?php esc_html_e( 'Total', 'ms-stats-for-bridge-project' ); ?></th>
+					<th><?php esc_html_e( 'Total', 'ms-stats' ); ?></th>
 					<th data-sum-col="1"><?php echo esc_html( array_sum( array_map( fn( $r ) => (int) $r->total, $lang_rows ) ) ); ?></th>
 				</tr></tfoot>
 			</table>
@@ -313,18 +313,18 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 				 ORDER BY completion_rate DESC" // phpcs:ignore
 			);
 			?>
-			<?php ms_stats_section_header( __( 'Course Completion %', 'ms-stats-for-bridge-project' ), 'ms-stats-table-progress', 'progress' ); ?>
+			<?php ms_stats_section_header( __( 'Course Completion %', 'ms-stats' ), 'ms-stats-table-progress', 'progress' ); ?>
 			<table id="ms-stats-table-progress" class="ms-stats-table widefat">
 				<thead><tr>
-					<th><?php esc_html_e( 'Course', 'ms-stats-for-bridge-project' ); ?></th>
-					<th><?php esc_html_e( 'Enrolled', 'ms-stats-for-bridge-project' ); ?></th>
-					<th><?php esc_html_e( 'Avg Progress', 'ms-stats-for-bridge-project' ); ?></th>
-					<th><?php esc_html_e( 'Fully Done', 'ms-stats-for-bridge-project' ); ?></th>
-					<th><?php esc_html_e( 'Completion Rate', 'ms-stats-for-bridge-project' ); ?></th>
+					<th><?php esc_html_e( 'Course', 'ms-stats' ); ?></th>
+					<th><?php esc_html_e( 'Enrolled', 'ms-stats' ); ?></th>
+					<th><?php esc_html_e( 'Avg Progress', 'ms-stats' ); ?></th>
+					<th><?php esc_html_e( 'Fully Done', 'ms-stats' ); ?></th>
+					<th><?php esc_html_e( 'Completion Rate', 'ms-stats' ); ?></th>
 				</tr></thead>
 				<tbody>
 					<?php if ( empty( $progress_rows ) ) : ?>
-						<tr><td colspan="5"><?php esc_html_e( 'No data.', 'ms-stats-for-bridge-project' ); ?></td></tr>
+						<tr><td colspan="5"><?php esc_html_e( 'No data.', 'ms-stats' ); ?></td></tr>
 					<?php else : ?>
 						<?php foreach ( $progress_rows as $row ) : ?>
 							<tr>
@@ -349,7 +349,7 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 					$p_comp_rate = $p_enrolled > 0 ? round( $p_completed / $p_enrolled * 100, 1 ) : 0;
 				?>
 				<tfoot><tr>
-					<th><?php esc_html_e( 'Total', 'ms-stats-for-bridge-project' ); ?></th>
+					<th><?php esc_html_e( 'Total', 'ms-stats' ); ?></th>
 					<th data-sum-col="1"><?php echo esc_html( $p_enrolled ); ?></th>
 					<th data-avg-col="2"><?php echo esc_html( $p_avg_prog ); ?>%</th>
 					<th data-sum-col="3"><?php echo esc_html( $p_completed ); ?></th>
@@ -380,19 +380,19 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 				 ORDER BY pass_rate DESC" // phpcs:ignore
 			);
 			?>
-			<?php ms_stats_section_header( __( 'Quiz Completion per Course', 'ms-stats-for-bridge-project' ), 'ms-stats-table-quizzes', 'quizzes' ); ?>
+			<?php ms_stats_section_header( __( 'Quiz Completion per Course', 'ms-stats' ), 'ms-stats-table-quizzes', 'quizzes' ); ?>
 			<table id="ms-stats-table-quizzes" class="ms-stats-table widefat">
 				<thead><tr>
-					<th><?php esc_html_e( 'Course', 'ms-stats-for-bridge-project' ); ?></th>
-					<th><?php esc_html_e( 'Quizzes', 'ms-stats-for-bridge-project' ); ?></th>
-					<th><?php esc_html_e( 'Users Attempted', 'ms-stats-for-bridge-project' ); ?></th>
-					<th><?php esc_html_e( 'Total Attempts', 'ms-stats-for-bridge-project' ); ?></th>
-					<th><?php esc_html_e( 'Passed', 'ms-stats-for-bridge-project' ); ?></th>
-					<th><?php esc_html_e( 'Pass Rate', 'ms-stats-for-bridge-project' ); ?></th>
+					<th><?php esc_html_e( 'Course', 'ms-stats' ); ?></th>
+					<th><?php esc_html_e( 'Quizzes', 'ms-stats' ); ?></th>
+					<th><?php esc_html_e( 'Users Attempted', 'ms-stats' ); ?></th>
+					<th><?php esc_html_e( 'Total Attempts', 'ms-stats' ); ?></th>
+					<th><?php esc_html_e( 'Passed', 'ms-stats' ); ?></th>
+					<th><?php esc_html_e( 'Pass Rate', 'ms-stats' ); ?></th>
 				</tr></thead>
 				<tbody>
 					<?php if ( empty( $quiz_rows ) ) : ?>
-						<tr><td colspan="6"><?php esc_html_e( 'No data.', 'ms-stats-for-bridge-project' ); ?></td></tr>
+						<tr><td colspan="6"><?php esc_html_e( 'No data.', 'ms-stats' ); ?></td></tr>
 					<?php else : ?>
 						<?php foreach ( $quiz_rows as $row ) : ?>
 							<tr>
@@ -419,7 +419,7 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 					$q_rate      = $q_total > 0 ? round( $q_passed / $q_total * 100, 1 ) : 0;
 				?>
 				<tfoot><tr>
-					<th><?php esc_html_e( 'Total', 'ms-stats-for-bridge-project' ); ?></th>
+					<th><?php esc_html_e( 'Total', 'ms-stats' ); ?></th>
 					<th data-sum-col="1"><?php echo esc_html( $q_quizzes ); ?></th>
 					<th data-sum-col="2"><?php echo esc_html( $q_attempted ); ?></th>
 					<th data-sum-col="3"><?php echo esc_html( $q_total ); ?></th>
@@ -452,15 +452,15 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 				foreach ( $posts as $post ) { $course_titles[ $post->ID ] = $post->post_title; }
 			}
 			?>
-			<?php ms_stats_section_header( __( 'Certificates Issued per Course', 'ms-stats-for-bridge-project' ), 'ms-stats-table-certificates', 'certificates' ); ?>
+			<?php ms_stats_section_header( __( 'Certificates Issued per Course', 'ms-stats' ), 'ms-stats-table-certificates', 'certificates' ); ?>
 			<table id="ms-stats-table-certificates" class="ms-stats-table widefat">
 				<thead><tr>
-					<th><?php esc_html_e( 'Course', 'ms-stats-for-bridge-project' ); ?></th>
-					<th><?php esc_html_e( 'Certificates Issued', 'ms-stats-for-bridge-project' ); ?></th>
+					<th><?php esc_html_e( 'Course', 'ms-stats' ); ?></th>
+					<th><?php esc_html_e( 'Certificates Issued', 'ms-stats' ); ?></th>
 				</tr></thead>
 				<tbody>
 					<?php if ( empty( $cert_rows ) ) : ?>
-						<tr><td colspan="2"><?php esc_html_e( 'No data.', 'ms-stats-for-bridge-project' ); ?></td></tr>
+						<tr><td colspan="2"><?php esc_html_e( 'No data.', 'ms-stats' ); ?></td></tr>
 					<?php else : ?>
 						<?php foreach ( $cert_rows as $row ) :
 							$cid   = (int) str_replace( 'stm_lms_certificate_code_', '', $row->meta_key );
@@ -471,7 +471,7 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 					<?php endif; ?>
 				</tbody>
 				<tfoot><tr>
-					<th><?php esc_html_e( 'Total', 'ms-stats-for-bridge-project' ); ?></th>
+					<th><?php esc_html_e( 'Total', 'ms-stats' ); ?></th>
 					<th data-sum-col="1"><?php echo esc_html( array_sum( array_map( fn( $r ) => (int) $r->issued, $cert_rows ) ) ); ?></th>
 				</tr></tfoot>
 			</table>
@@ -503,23 +503,23 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 			foreach ( $user_cert_rows as $row ) { $grouped_certs[ $row->user_id ][] = $row; }
 			?>
 			<div class="ms-stats-section-header">
-				<h2><?php esc_html_e( 'Certificates per User', 'ms-stats-for-bridge-project' ); ?></h2>
+				<h2><?php esc_html_e( 'Certificates per User', 'ms-stats' ); ?></h2>
 				<div class="ms-stats-export-buttons">
 					<a href="<?php echo esc_url( ms_stats_export_url( 'user_certificates' ) ); ?>" class="button button-secondary">&#11015; CSV</a>
-					<?php ms_stats_pdf_btn( 'ms-stats-table-usercerts', __( 'Certificates per User', 'ms-stats-for-bridge-project' ) ); ?>
+					<?php ms_stats_pdf_btn( 'ms-stats-table-usercerts', __( 'Certificates per User', 'ms-stats' ) ); ?>
 				</div>
 			</div>
-			<p style="color:#50575e;margin-top:-8px;margin-bottom:14px;font-size:12px;"><?php esc_html_e( 'Date filter does not apply — no date column on certificate records.', 'ms-stats-for-bridge-project' ); ?></p>
+			<p style="color:#50575e;margin-top:-8px;margin-bottom:14px;font-size:12px;"><?php esc_html_e( 'Date filter does not apply — no date column on certificate records.', 'ms-stats' ); ?></p>
 			<table id="ms-stats-table-usercerts" class="widefat fixed striped">
 				<thead><tr>
-					<th style="width:160px;"><?php esc_html_e( 'User', 'ms-stats-for-bridge-project' ); ?></th>
-					<th style="width:200px;"><?php esc_html_e( 'Email', 'ms-stats-for-bridge-project' ); ?></th>
-					<th><?php esc_html_e( 'Course', 'ms-stats-for-bridge-project' ); ?></th>
-					<th style="width:180px;"><?php esc_html_e( 'Certificate Code', 'ms-stats-for-bridge-project' ); ?></th>
+					<th style="width:160px;"><?php esc_html_e( 'User', 'ms-stats' ); ?></th>
+					<th style="width:200px;"><?php esc_html_e( 'Email', 'ms-stats' ); ?></th>
+					<th><?php esc_html_e( 'Course', 'ms-stats' ); ?></th>
+					<th style="width:180px;"><?php esc_html_e( 'Certificate Code', 'ms-stats' ); ?></th>
 				</tr></thead>
 				<tbody>
 					<?php if ( empty( $grouped_certs ) ) : ?>
-						<tr><td colspan="4"><?php esc_html_e( 'No certificates found.', 'ms-stats-for-bridge-project' ); ?></td></tr>
+						<tr><td colspan="4"><?php esc_html_e( 'No certificates found.', 'ms-stats' ); ?></td></tr>
 					<?php else : ?>
 						<?php foreach ( $grouped_certs as $uid => $rows ) :
 							$count = count( $rows ); $first = true;
@@ -528,7 +528,7 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 									<?php if ( $first ) : ?>
 										<td rowspan="<?php echo esc_attr( $count ); ?>" style="vertical-align:top;border-right:2px solid #dcdcde;">
 											<span style="font-weight:600;"><?php echo esc_html( $row->display_name ); ?></span>
-											<br><small style="color:#6b7280;font-weight:400;"><?php echo esc_html( $count ); ?> <?php echo esc_html( $count === 1 ? __( 'certificate', 'ms-stats-for-bridge-project' ) : __( 'certificates', 'ms-stats-for-bridge-project' ) ); ?></small>
+											<br><small style="color:#6b7280;font-weight:400;"><?php echo esc_html( $count ); ?> <?php echo esc_html( $count === 1 ? __( 'certificate', 'ms-stats' ) : __( 'certificates', 'ms-stats' ) ); ?></small>
 										</td>
 										<td rowspan="<?php echo esc_attr( $count ); ?>" style="vertical-align:top;border-right:2px solid #dcdcde;"><?php echo esc_html( $row->user_email ); ?></td>
 										<?php $first = false; ?>
@@ -545,36 +545,36 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 		<?php elseif ( 'settings' === $active_tab ) : ?>
 
 			<?php if ( isset( $_GET['saved'] ) ) : ?>
-				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Settings saved.', 'ms-stats-for-bridge-project' ); ?></p></div>
+				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Settings saved.', 'ms-stats' ); ?></p></div>
 			<?php endif; ?>
 
-			<h2><?php esc_html_e( 'Plugin Settings', 'ms-stats-for-bridge-project' ); ?></h2>
+			<h2><?php esc_html_e( 'Plugin Settings', 'ms-stats' ); ?></h2>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin.php?page=' . $page_slug . '&tab=settings' ) ); ?>">
 				<?php wp_nonce_field( 'ms_stats_save_settings', '_ms_stats_nonce' ); ?>
 				<table class="form-table" role="presentation">
 					<tr>
 						<th scope="row">
-							<label for="ms_stats_report_label"><?php esc_html_e( 'Report Label', 'ms-stats-for-bridge-project' ); ?></label>
+							<label for="ms_stats_report_label"><?php esc_html_e( 'Report Label', 'ms-stats' ); ?></label>
 						</th>
 						<td>
 							<input type="text" id="ms_stats_report_label" name="ms_stats_report_label"
 							       value="<?php echo esc_attr( get_option( 'ms_stats_report_label', get_bloginfo( 'name' ) ) ); ?>"
 							       class="regular-text">
 							<p class="description">
-								<?php esc_html_e( 'Shown in the admin page title and PDF footer. Defaults to the site name.', 'ms-stats-for-bridge-project' ); ?>
+								<?php esc_html_e( 'Shown in the admin page title and PDF footer. Defaults to the site name.', 'ms-stats' ); ?>
 							</p>
 						</td>
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="ms_stats_pdf_logo_url"><?php esc_html_e( 'PDF Logo URL', 'ms-stats-for-bridge-project' ); ?></label>
+							<label for="ms_stats_pdf_logo_url"><?php esc_html_e( 'PDF Logo URL', 'ms-stats' ); ?></label>
 						</th>
 						<td>
 							<input type="url" id="ms_stats_pdf_logo_url" name="ms_stats_pdf_logo_url"
 							       value="<?php echo esc_attr( get_option( 'ms_stats_pdf_logo_url', '' ) ); ?>"
 							       class="large-text" placeholder="https://example.com/logo.png">
 							<p class="description">
-								<?php esc_html_e( 'PNG or JPEG URL used in PDF exports. Takes priority over the site logo. Copy the URL from your Media Library.', 'ms-stats-for-bridge-project' ); ?>
+								<?php esc_html_e( 'PNG or JPEG URL used in PDF exports. Takes priority over the site logo. Copy the URL from your Media Library.', 'ms-stats' ); ?>
 							</p>
 							<?php
 							$current_pdf_logo = get_option( 'ms_stats_pdf_logo_url', '' );
@@ -588,19 +588,19 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="ms_stats_country_meta_key"><?php esc_html_e( 'Country meta key', 'ms-stats-for-bridge-project' ); ?></label>
+							<label for="ms_stats_country_meta_key"><?php esc_html_e( 'Country meta key', 'ms-stats' ); ?></label>
 						</th>
 						<td>
 							<input type="text" id="ms_stats_country_meta_key" name="ms_stats_country_meta_key"
 							       value="<?php echo esc_attr( get_option( 'ms_stats_country_meta_key', 'ms-country' ) ); ?>"
 							       class="regular-text" placeholder="ms-country">
 							<p class="description">
-								<?php esc_html_e( 'Enter the Field ID from MasterStudy Forms Editor (e.g. ms-country). The plugin resolves it to the real meta key automatically. You can also enter the raw meta key directly.', 'ms-stats-for-bridge-project' ); ?>
+								<?php esc_html_e( 'Enter the Field ID from MasterStudy Forms Editor (e.g. ms-country). The plugin resolves it to the real meta key automatically. You can also enter the raw meta key directly.', 'ms-stats' ); ?>
 							</p>
 						</td>
 					</tr>
 				</table>
-				<?php submit_button( __( 'Save Settings', 'ms-stats-for-bridge-project' ) ); ?>
+				<?php submit_button( __( 'Save Settings', 'ms-stats' ) ); ?>
 			</form>
 
 		<?php endif; ?>

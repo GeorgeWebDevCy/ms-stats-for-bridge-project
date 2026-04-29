@@ -61,7 +61,7 @@ class Ms_Stats_For_Bridge_Project_Admin {
 	 */
 	public function enqueue_styles() {
 		$screen = get_current_screen();
-		if ( ! $screen || strpos( $screen->id, 'ms-stats-for-bridge-project' ) === false ) {
+		if ( ! $screen || strpos( $screen->id, 'ms-stats' ) === false ) {
 			return;
 		}
 
@@ -131,7 +131,7 @@ class Ms_Stats_For_Bridge_Project_Admin {
 
 	public function enqueue_scripts() {
 		$screen = get_current_screen();
-		if ( ! $screen || strpos( $screen->id, 'ms-stats-for-bridge-project' ) === false ) {
+		if ( ! $screen || strpos( $screen->id, 'ms-stats' ) === false ) {
 			return;
 		}
 
@@ -293,10 +293,10 @@ class Ms_Stats_For_Bridge_Project_Admin {
 
 	public function add_plugin_admin_menu() {
 		add_menu_page(
-			__( 'MS Stats', 'ms-stats-for-bridge-project' ),
-			__( 'MS Stats', 'ms-stats-for-bridge-project' ),
+			__( 'MS Stats', 'ms-stats' ),
+			__( 'MS Stats', 'ms-stats' ),
 			'manage_options',
-			'ms-stats-for-bridge-project',
+			'ms-stats',
 			array( $this, 'display_plugin_admin_page' ),
 			'dashicons-chart-bar',
 			26
@@ -326,12 +326,12 @@ class Ms_Stats_For_Bridge_Project_Admin {
 		if ( isset( $_POST['ms_stats_pdf_logo_url'] ) ) {
 			update_option( 'ms_stats_pdf_logo_url', esc_url_raw( $_POST['ms_stats_pdf_logo_url'] ) );
 		}
-		wp_safe_redirect( admin_url( 'admin.php?page=ms-stats-for-bridge-project&tab=settings&saved=1' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=ms-stats&tab=settings&saved=1' ) );
 		exit;
 	}
 
 	public function handle_csv_export() {
-		if ( ! isset( $_GET['page'] ) || 'ms-stats-for-bridge-project' !== $_GET['page'] ) {
+		if ( ! isset( $_GET['page'] ) || 'ms-stats' !== $_GET['page'] ) {
 			return;
 		}
 		if ( empty( $_GET['export'] ) || 'csv' !== $_GET['export'] ) {

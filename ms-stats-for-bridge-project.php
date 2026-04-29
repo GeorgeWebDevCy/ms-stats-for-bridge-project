@@ -14,14 +14,14 @@
  *
  * @wordpress-plugin
  * Plugin Name:       MS LMS Stats
- * Plugin URI:        https://www.georgenicolaou.me/plugins/ms-stats-for-bridge-project
+ * Plugin URI:        https://github.com/GeorgeWebDevCy/ms-stats
  * Description:       This plugin create a menu in admin with stats and reports for Master Study
- * Version:           3.7.0
+ * Version:           3.8.0
  * Author:            George Nicolaou
  * Author URI:        https://www.georgenicolaou.me/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       ms-stats-for-bridge-project
+ * Text Domain:       ms-stats
  * Domain Path:       /languages
  */
 
@@ -35,9 +35,9 @@ require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 $ms_stats_update_checker = PucFactory::buildUpdateChecker(
-	'https://github.com/GeorgeWebDevCy/ms-stats-for-bridge-project',
+	'https://github.com/GeorgeWebDevCy/ms-stats',
 	__FILE__,
-	'ms-stats-for-bridge-project'
+	'ms-stats'
 );
 $ms_stats_update_checker->setBranch( 'main' );
 
@@ -46,7 +46,7 @@ $ms_stats_update_checker->setBranch( 'main' );
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'MS_STATS_FOR_BRIDGE_PROJECT_VERSION', '3.7.0' );
+define( 'MS_STATS_FOR_BRIDGE_PROJECT_VERSION', '3.8.0' );
 
 /**
  * The code that runs during plugin activation.

@@ -35,7 +35,7 @@ class Ms_Stats_For_Bridge_Project_i18n {
 	public function load_plugin_textdomain() {
 
 		load_plugin_textdomain(
-			'ms-stats-for-bridge-project',
+			'ms-stats',
 			false,
 			dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/'
 		);
