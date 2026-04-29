@@ -121,7 +121,7 @@ if ( 'overview' === $tab ) {
 
 } elseif ( 'countries' === $tab ) {
 
-	$country_meta_key = get_option( 'ms_stats_country_meta_key', 'aqdnfaayngf' );
+	$country_meta_key = ms_stats_resolve_country_meta_key( get_option( 'ms_stats_country_meta_key', 'ms-country' ) );
 	$country_rows     = $wpdb->get_results(
 		$wpdb->prepare(
 			"SELECT LOWER(TRIM(um.meta_value)) AS country_val,

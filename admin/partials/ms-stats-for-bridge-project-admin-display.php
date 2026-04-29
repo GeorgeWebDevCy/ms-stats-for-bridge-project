@@ -192,7 +192,7 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 		<?php elseif ( 'countries' === $active_tab ) : ?>
 
 			<?php
-			$country_meta_key = get_option( 'ms_stats_country_meta_key', 'aqdnfaayngf' );
+			$country_meta_key = ms_stats_resolve_country_meta_key( get_option( 'ms_stats_country_meta_key', 'ms-country' ) );
 			$country_rows     = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT LOWER(TRIM(um.meta_value)) AS country_val,
@@ -506,10 +506,10 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 						</th>
 						<td>
 							<input type="text" id="ms_stats_country_meta_key" name="ms_stats_country_meta_key"
-							       value="<?php echo esc_attr( get_option( 'ms_stats_country_meta_key', 'aqdnfaayngf' ) ); ?>"
-							       class="regular-text">
+							       value="<?php echo esc_attr( get_option( 'ms_stats_country_meta_key', 'ms-country' ) ); ?>"
+							       class="regular-text" placeholder="ms-country">
 							<p class="description">
-								<?php esc_html_e( 'The usermeta key that stores the enrolled user\'s country. Default: aqdnfaayngf', 'ms-stats-for-bridge-project' ); ?>
+								<?php esc_html_e( 'Enter the Field ID from MasterStudy Forms Editor (e.g. ms-country). The plugin resolves it to the real meta key automatically. You can also enter the raw meta key directly.', 'ms-stats-for-bridge-project' ); ?>
 							</p>
 						</td>
 					</tr>

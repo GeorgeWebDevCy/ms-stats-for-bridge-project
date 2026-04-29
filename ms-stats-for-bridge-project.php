@@ -16,7 +16,7 @@
  * Plugin Name:       MS Stats For Bridge Project
  * Plugin URI:        https://www.georgenicolaou.me/plugins/ms-stats-for-bridge-project
  * Description:       This plugin create a menu in admin with stats and reports for Master Study
- * Version:           2.9.0
+ * Version:           3.0.0
  * Author:            George Nicolaou
  * Author URI:        https://www.georgenicolaou.me/
  * License:           GPL-2.0+
@@ -46,7 +46,7 @@ $ms_stats_update_checker->setBranch( 'main' );
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'MS_STATS_FOR_BRIDGE_PROJECT_VERSION', '2.9.0' );
+define( 'MS_STATS_FOR_BRIDGE_PROJECT_VERSION', '3.0.0' );
 
 /**
  * The code that runs during plugin activation.
@@ -97,4 +97,46 @@ function run_ms_stats_for_bridge_project() {
 	$plugin = new Ms_Stats_For_Bridge_Project();
 	$plugin->run();
 }
+/**
+ * Resolve a MasterStudy profile form field slug (e.g. "ms-country") to the
+ * actual usermeta key (e.g. "aqdnfaayngf"). MasterStudy auto-generates a
+ * random hash as the real meta key; the Field ID the admin sees is just a slug.
+ * Falls back to the input unchanged if no match is found.
+ *
+ * @param string $input Field ID/slug or raw meta key.
+ * @return string Resolved meta key.
+ */
+function ms_stats_resolve_country_meta_key( $input ) {
+	$input = trim( (string) $input );
+	if ( '' === $input ) {
+		return $input;
+	}
+
+	$forms_raw = get_option( 'stm_lms_form_builder_forms' );
+	$forms     = maybe_unserialize( $forms_raw );
+
+	if ( ! is_array( $forms ) ) {
+		return $input;
+	}
+
+	foreach ( $forms as $form ) {
+		if ( empty( $form['slug'] ) || 'profile_form' !== $form['slug'] ) {
+			continue;
+		}
+		if ( empty( $form['fields'] ) || ! is_array( $form['fields'] ) ) {
+			continue;
+		}
+		foreach ( $form['fields'] as $field ) {
+			// Match by slug (Field ID the admin sees) OR by the generated id.
+			$slug = $field['slug'] ?? '';
+			$id   = $field['id'] ?? '';
+			if ( $input === $slug || $input === $id ) {
+				return $id !== '' ? $id : $input;
+			}
+		}
+	}
+
+	return $input;
+}
+
 run_ms_stats_for_bridge_project();
