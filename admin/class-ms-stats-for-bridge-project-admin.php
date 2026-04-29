@@ -165,23 +165,41 @@ class Ms_Stats_For_Bridge_Project_Admin {
 					$logo_norm
 				);
 
-				// Convert raw image bytes to PNG if WebP (jsPDF doesn't support WebP).
+				// Convert raw image bytes to PNG (WebP → PNG for jsPDF compatibility).
+				// Tries GD first, falls back to Imagick (available on Hostinger and most hosts).
 				$ms_stats_to_png = function( $raw ) {
-					if ( ! function_exists( 'imagecreatefromstring' ) ) {
-						return false;
+					// Strategy A: GD (works if compiled with WebP support).
+					if ( function_exists( 'imagecreatefromstring' ) ) {
+						// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+						$img = @imagecreatefromstring( $raw );
+						if ( $img ) {
+							imagesavealpha( $img, true );
+							ob_start();
+							imagepng( $img );
+							$png = ob_get_clean();
+							imagedestroy( $img );
+							if ( $png ) {
+								return $png;
+							}
+						}
 					}
-					// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-					$img = @imagecreatefromstring( $raw );
-					if ( ! $img ) {
-						return false;
+					// Strategy B: Imagick (Hostinger, cPanel, Kinsta — always supports WebP).
+					if ( class_exists( 'Imagick' ) ) {
+						try {
+							$im = new Imagick();
+							$im->readImageBlob( $raw );
+							$im->setImageFormat( 'png' );
+							$im->setImageAlphaChannel( Imagick::ALPHACHANNEL_ACTIVATE );
+							$png = $im->getImageBlob();
+							$im->destroy();
+							if ( $png ) {
+								return $png;
+							}
+						} catch ( Exception $e ) {
+							// fall through.
+						}
 					}
-					// Preserve transparency.
-					imagesavealpha( $img, true );
-					ob_start();
-					imagepng( $img );
-					$png = ob_get_clean();
-					imagedestroy( $img );
-					return $png;
+					return false;
 				};
 
 				// Strategy 1: read from local filesystem (fast, no HTTP).
