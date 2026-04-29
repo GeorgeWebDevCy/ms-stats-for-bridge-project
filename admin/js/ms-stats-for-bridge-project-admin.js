@@ -169,14 +169,14 @@
 
 		doc.setFontSize( 14 );
 		doc.setFont( uFont, 'bold' );
-		doc.text( title, 10, 20 );
+		doc.text( title, 10, 18 );
 
 		doc.setFontSize( 9 );
 		doc.setFont( uFont, 'normal' );
-		doc.text( dateLabel, 10, 29 );
+		doc.text( dateLabel, 10, 26 );
 
 		doc.setFontSize( 8 );
-		doc.text( new Date().toLocaleDateString( 'en-GB' ), pageW - 10, 29, { align: 'right' } );
+		doc.text( new Date().toLocaleDateString( 'en-GB' ), 10, 33 );
 
 		/* table */
 		doc.autoTable( {

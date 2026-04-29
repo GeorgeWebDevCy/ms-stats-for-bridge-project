@@ -16,7 +16,7 @@
  * Plugin Name:       MS LMS Stats
  * Plugin URI:        https://github.com/GeorgeWebDevCy/ms-stats
  * Description:       This plugin create a menu in admin with stats and reports for Master Study
- * Version:           3.8.0
+ * Version:           3.8.1
  * Author:            George Nicolaou
  * Author URI:        https://www.georgenicolaou.me/
  * License:           GPL-2.0+
@@ -46,7 +46,7 @@ $ms_stats_update_checker->setBranch( 'main' );
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'MS_STATS_FOR_BRIDGE_PROJECT_VERSION', '3.8.0' );
+define( 'MS_STATS_FOR_BRIDGE_PROJECT_VERSION', '3.8.1' );
 
 /**
  * The code that runs during plugin activation.
