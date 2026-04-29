@@ -110,10 +110,10 @@ class Ms_Stats_For_Bridge_Project_Admin {
 			.ms-stats-tab-panel .dt-layout-row{margin-bottom:12px;}
 			.ms-stats-tab-panel .dt-search input{border:1px solid #c3c4c7;border-radius:6px;padding:6px 12px;font-size:13px;outline:none;transition:border-color .2s;}
 			.ms-stats-tab-panel .dt-search input:focus{border-color:{$primary};}
-			.ms-stats-tab-panel .dt-length select{border:1px solid #c3c4c7;border-radius:6px;padding:5px 10px;font-size:13px;}
+			.ms-stats-tab-panel .dt-length select,.ms-stats-tab-panel select.dt-input{border:1px solid #c3c4c7;border-radius:6px;padding:5px 10px;font-size:13px;min-width:75px;width:auto;}
 			.ms-stats-tab-panel .dt-paging .dt-paging-button{border-radius:4px!important;border:1px solid #dcdcde!important;background:#fff!important;color:#50575e!important;padding:4px 10px!important;margin:0 2px!important;font-size:12px!important;cursor:pointer;}
-			.ms-stats-tab-panel .dt-paging .dt-paging-button.current,.ms-stats-tab-panel .dt-paging .dt-paging-button.current:hover{background:{$primary}!important;border-color:{$primary}!important;color:#fff!important;}
-			.ms-stats-tab-panel .dt-paging .dt-paging-button:hover{background:{$primary}18!important;border-color:{$primary}!important;color:{$primary}!important;}
+			.ms-stats-tab-panel .dt-paging button.current,.ms-stats-tab-panel .dt-paging button.current:hover,.ms-stats-tab-panel .dt-paging .dt-paging-button.current,.ms-stats-tab-panel .dt-paging .dt-paging-button.current:hover{background:{$primary}!important;border-color:{$primary}!important;color:#ffffff!important;border-radius:4px!important;}
+			.ms-stats-tab-panel .dt-paging .dt-paging-button:not(.current):hover{background:{$primary}18!important;border-color:{$primary}!important;color:{$primary}!important;}
 			.ms-stats-tab-panel .dt-info{font-size:12px;color:#50575e;}
 			.ms-stats-tab-panel table.ms-stats-table tfoot th,.ms-stats-tab-panel table.ms-stats-table tfoot td{display:table-cell!important;background:#eef0f3!important;color:#111827!important;font-weight:700!important;border-top:2px solid {$primary}!important;border-bottom:none!important;padding:9px 14px!important;font-size:12px;}
 			.ms-stats-tab-panel table.ms-stats-table tfoot tr:first-child td:first-child,.ms-stats-tab-panel table.ms-stats-table tfoot tr:first-child th:first-child{text-align:left!important;}

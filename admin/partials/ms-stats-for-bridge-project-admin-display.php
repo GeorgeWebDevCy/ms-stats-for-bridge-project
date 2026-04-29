@@ -165,6 +165,27 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 			$total_enrollments = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}stm_lms_user_courses WHERE 1=1 $date_where_unix" ); // phpcs:ignore
 			$total_users       = (int) $wpdb->get_var( "SELECT COUNT(DISTINCT user_id) FROM {$wpdb->prefix}stm_lms_user_courses WHERE 1=1 $date_where_unix" ); // phpcs:ignore
 			$total_courses     = (int) $wpdb->get_var( "SELECT COUNT(DISTINCT course_id) FROM {$wpdb->prefix}stm_lms_user_courses WHERE 1=1 $date_where_unix" ); // phpcs:ignore
+
+			// Total published courses in the default site language.
+			$icl_table = $wpdb->prefix . 'icl_translations';
+			if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $icl_table ) ) ) {
+				// WPML active: count courses that are the original/default language version.
+				$total_site_courses = (int) $wpdb->get_var(
+					"SELECT COUNT(DISTINCT p.ID)
+					 FROM {$wpdb->posts} p
+					 INNER JOIN {$icl_table} t
+					        ON t.element_id = p.ID
+					        AND t.element_type = 'post_stm-courses'
+					        AND t.source_language_code IS NULL
+					 WHERE p.post_type = 'stm-courses'
+					   AND p.post_status = 'publish'"
+				);
+			} else {
+				$total_site_courses = (int) $wpdb->get_var(
+					"SELECT COUNT(ID) FROM {$wpdb->posts}
+					 WHERE post_type = 'stm-courses' AND post_status = 'publish'"
+				);
+			}
 			?>
 			<div class="ms-stats-section-header">
 				<h2><?php esc_html_e( 'Enrollment Overview', 'ms-stats-for-bridge-project' ); ?></h2>
@@ -178,6 +199,7 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 					array( 'label' => __( 'Total Enrollments', 'ms-stats-for-bridge-project' ),       'value' => $total_enrollments ),
 					array( 'label' => __( 'Enrolled Users', 'ms-stats-for-bridge-project' ),          'value' => $total_users ),
 					array( 'label' => __( 'Courses with Enrollments', 'ms-stats-for-bridge-project' ), 'value' => $total_courses ),
+					array( 'label' => __( 'Total Courses (default language)', 'ms-stats-for-bridge-project' ), 'value' => $total_site_courses ),
 				) as $stat ) : ?>
 					<div class="ms-stats-card">
 						<div class="ms-stats-card-value"><?php echo esc_html( $stat['value'] ); ?></div>
@@ -191,6 +213,7 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 					<tr><td><?php esc_html_e( 'Total Enrollments', 'ms-stats-for-bridge-project' ); ?></td><td><?php echo esc_html( $total_enrollments ); ?></td></tr>
 					<tr><td><?php esc_html_e( 'Enrolled Users', 'ms-stats-for-bridge-project' ); ?></td><td><?php echo esc_html( $total_users ); ?></td></tr>
 					<tr><td><?php esc_html_e( 'Courses with Enrollments', 'ms-stats-for-bridge-project' ); ?></td><td><?php echo esc_html( $total_courses ); ?></td></tr>
+					<tr><td><?php esc_html_e( 'Total Courses (default language)', 'ms-stats-for-bridge-project' ); ?></td><td><?php echo esc_html( $total_site_courses ); ?></td></tr>
 				</tbody>
 			</table>
 
