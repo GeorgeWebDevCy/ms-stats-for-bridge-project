@@ -189,6 +189,16 @@
 			tableLineColor:  [ 210, 212, 216 ],
 			tableLineWidth:  0.15,
 			margin:          { left: 10, right: 10 },
+			didParseCell: function ( data ) {
+				/* Replace bar-chart cells with clean text from data-pdf-val attribute */
+				var raw = data.cell.raw;
+				if ( raw && raw.getAttribute ) {
+					var pdfVal = raw.getAttribute( 'data-pdf-val' );
+					if ( pdfVal !== null ) {
+						data.cell.text = [ pdfVal ];
+					}
+				}
+			},
 			didDrawPage: function ( data ) {
 				doc.setFontSize( 7.5 ); doc.setTextColor( 150 );
 				doc.text( 'Page ' + data.pageNumber, pageW / 2, pageH - 5, { align: 'center' } );

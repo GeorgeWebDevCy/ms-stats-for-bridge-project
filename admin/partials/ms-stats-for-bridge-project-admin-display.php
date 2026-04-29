@@ -309,7 +309,7 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 								<td><?php echo esc_html( $row->enrolled ); ?></td>
 								<td><?php echo esc_html( $row->avg_progress ); ?>%</td>
 								<td><?php echo esc_html( $row->completed ); ?></td>
-								<td>
+								<td data-pdf-val="<?php echo esc_attr( $row->completion_rate ?? 0 ); ?>%">
 									<div class="ms-stats-bar-wrap">
 										<div class="ms-stats-bar"><div class="ms-stats-bar-fill" style="width:<?php echo esc_attr( min( 100, (float) $row->completion_rate ) ); ?>%;background:<?php echo esc_attr( $ms_bar_blue ); ?>"></div></div>
 										<?php echo esc_html( $row->completion_rate ?? 0 ); ?>%
@@ -378,7 +378,7 @@ $base_url = admin_url( 'admin.php?page=' . $page_slug . '&tab=' . $active_tab );
 								<td><?php echo esc_html( $row->users_attempted ); ?></td>
 								<td><?php echo esc_html( $row->total_attempts ); ?></td>
 								<td><?php echo esc_html( $row->passed_attempts ); ?></td>
-								<td>
+								<td data-pdf-val="<?php echo esc_attr( $row->pass_rate ?? 0 ); ?>%">
 									<div class="ms-stats-bar-wrap">
 										<div class="ms-stats-bar"><div class="ms-stats-bar-fill" style="width:<?php echo esc_attr( min( 100, (float) $row->pass_rate ) ); ?>%;background:<?php echo esc_attr( $ms_bar_green ); ?>"></div></div>
 										<?php echo esc_html( $row->pass_rate ?? 0 ); ?>%
