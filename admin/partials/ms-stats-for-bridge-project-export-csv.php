@@ -31,6 +31,50 @@ if ( $ts_from && $ts_to ) {
 	$date_where_datetime = $wpdb->prepare( ' AND created_at <= %s ', gmdate( 'Y-m-d 23:59:59', $ts_to ) );
 }
 
+function ms_stats_locale_name( $code ) {
+	$map = array(
+		'en_US' => 'English (United States)',
+		'en_GB' => 'English (United Kingdom)',
+		'en'    => 'English',
+		'cs_CZ' => 'Czech',
+		'de_DE' => 'German',
+		'de_DE_formal' => 'German (Formal)',
+		'pl_PL' => 'Polish',
+		'uk'    => 'Ukrainian',
+		'el'    => 'Greek',
+		'ar'    => 'Arabic',
+		'fr_FR' => 'French',
+		'es_ES' => 'Spanish (Spain)',
+		'es_MX' => 'Spanish (Mexico)',
+		'it_IT' => 'Italian',
+		'pt_BR' => 'Portuguese (Brazil)',
+		'pt_PT' => 'Portuguese (Portugal)',
+		'nl_NL' => 'Dutch',
+		'ro_RO' => 'Romanian',
+		'ru_RU' => 'Russian',
+		'bg_BG' => 'Bulgarian',
+		'hr'    => 'Croatian',
+		'hu_HU' => 'Hungarian',
+		'sk_SK' => 'Slovak',
+		'sl_SI' => 'Slovenian',
+		'lt_LT' => 'Lithuanian',
+		'lv'    => 'Latvian',
+		'et'    => 'Estonian',
+		'fi'    => 'Finnish',
+		'sv_SE' => 'Swedish',
+		'da_DK' => 'Danish',
+		'nb_NO' => 'Norwegian',
+		'tr_TR' => 'Turkish',
+		'he_IL' => 'Hebrew',
+		'fa_IR' => 'Persian',
+		'zh_CN' => 'Chinese (Simplified)',
+		'zh_TW' => 'Chinese (Traditional)',
+		'ja'    => 'Japanese',
+		'ko_KR' => 'Korean',
+	);
+	return $map[ $code ] ?? $code;
+}
+
 $filenames = array(
 	'overview'          => 'ms-stats-overview',
 	'countries'         => 'ms-stats-users-by-country',
@@ -112,9 +156,9 @@ if ( 'overview' === $tab ) {
 		 GROUP BY lng_code ORDER BY total DESC" // phpcs:ignore
 	);
 
-	fputcsv( $out, array( 'Language Code', 'Enrollments' ) );
+	fputcsv( $out, array( 'Language', 'Enrollments' ) );
 	foreach ( $rows as $row ) {
-		fputcsv( $out, array( $row->lng_code, $row->total ) );
+		fputcsv( $out, array( ms_stats_locale_name( $row->lng_code ), $row->total ) );
 	}
 
 } elseif ( 'progress' === $tab ) {
