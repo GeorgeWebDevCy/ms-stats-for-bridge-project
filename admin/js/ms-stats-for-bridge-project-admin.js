@@ -76,18 +76,38 @@
 		} );
 	}
 
+	function fmtYMD( ymd ) {
+		if ( ! ymd ) { return ''; }
+		var p = ymd.split( '-' );
+		return p[2] + '/' + p[1] + '/' + p[0];
+	}
+
+	function dateRangeLabel() {
+		var params = new URLSearchParams( window.location.search );
+		var from   = params.get( 'date_from' ) || '';
+		var to     = params.get( 'date_to' )   || '';
+		if ( from && to )   { return 'Period: ' + fmtYMD( from ) + ' – ' + fmtYMD( to ); }
+		if ( from )         { return 'From: ' + fmtYMD( from ); }
+		if ( to )           { return 'To: ' + fmtYMD( to ); }
+		return 'All records';
+	}
+
 	async function buildPDF( tableId, title ) {
-		var rgb   = hexToRgb( primary );
-		var doc   = new window.jspdf.jsPDF( 'l', 'mm', 'a4' );
-		var pageW = doc.internal.pageSize.getWidth();
-		var pageH = doc.internal.pageSize.getHeight();
+		var rgb       = hexToRgb( primary );
+		var doc       = new window.jspdf.jsPDF( 'l', 'mm', 'a4' );
+		var pageW     = doc.internal.pageSize.getWidth();
+		var pageH     = doc.internal.pageSize.getHeight();
+		var headerH   = 34;
+		var dateLabel = dateRangeLabel();
 
 		/* embed Unicode font so diacritics and Greek render correctly */
 		await loadFont( doc );
 
+		var uFont = cfg.fontUrl ? 'DejaVuSans' : 'helvetica';
+
 		/* coloured header bar */
 		doc.setFillColor( rgb[0], rgb[1], rgb[2] );
-		doc.rect( 0, 0, pageW, 26, 'F' );
+		doc.rect( 0, 0, pageW, headerH, 'F' );
 
 		/* logo — best-effort, skip on CORS failure */
 		if ( cfg.logo ) {
@@ -96,30 +116,36 @@
 				var cv   = document.createElement( 'canvas' );
 				cv.width = img.width; cv.height = img.height;
 				cv.getContext( '2d' ).drawImage( img, 0, 0 );
-				var logoH = 16;
+				var logoH = 20;
 				var logoW = ( img.width / img.height ) * logoH;
-				doc.addImage( cv.toDataURL( 'image/png' ), 'PNG', pageW - logoW - 10, 5, logoW, logoH );
+				doc.addImage( cv.toDataURL( 'image/png' ), 'PNG', pageW - logoW - 10, 7, logoW, logoH );
 			} catch ( e ) { /* logo unavailable, continue */ }
 		}
 
 		/* header text */
 		doc.setTextColor( 255, 255, 255 );
-		doc.setFontSize( 8 );  doc.setFont( undefined, 'normal' );
+		doc.setFontSize( 8 );
+		doc.setFont( uFont, 'normal' );
 		doc.text( cfg.siteName || 'Bridge Project', 10, 9 );
-		doc.setFontSize( 14 ); doc.setFont( undefined, 'bold' );
-		doc.text( title, 10, 20 );
-		doc.setFontSize( 8 );  doc.setFont( undefined, 'normal' );
-		doc.text( new Date().toLocaleDateString( 'en-GB' ), pageW - 10, 20, { align: 'right' } );
 
-		var uniFont = cfg.fontUrl ? 'DejaVuSans' : 'helvetica';
+		doc.setFontSize( 14 );
+		doc.setFont( uFont, 'bold' );
+		doc.text( title, 10, 20 );
+
+		doc.setFontSize( 9 );
+		doc.setFont( uFont, 'normal' );
+		doc.text( dateLabel, 10, 29 );
+
+		doc.setFontSize( 8 );
+		doc.text( new Date().toLocaleDateString( 'en-GB' ), pageW - 10, 29, { align: 'right' } );
 
 		/* table */
 		doc.autoTable( {
 			html:          '#' + tableId,
-			startY:        32,
+			startY:        headerH + 4,
 			theme:         'grid',
-			headStyles:    { fillColor: rgb, textColor: [ 255, 255, 255 ], fontStyle: 'normal', fontSize: 8.5, font: uniFont },
-			bodyStyles:    { fontSize: 8, textColor: [ 40, 40, 40 ], font: uniFont },
+			headStyles:    { fillColor: rgb, textColor: [ 255, 255, 255 ], fontStyle: 'normal', fontSize: 8.5, font: uFont },
+			bodyStyles:    { fontSize: 8, textColor: [ 40, 40, 40 ], font: uFont },
 			alternateRowStyles: { fillColor: [ 246, 247, 249 ] },
 			tableLineColor:  [ 210, 212, 216 ],
 			tableLineWidth:  0.15,

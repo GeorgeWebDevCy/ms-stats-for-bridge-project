@@ -71,8 +71,8 @@ class Ms_Stats_For_Bridge_Project_Admin {
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/ms-stats-for-bridge-project-admin.css', array(), $this->version, 'all' );
 		wp_enqueue_style( 'jquery-ui-style', 'https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.min.css', array(), '1.13.3' );
-		wp_enqueue_style( 'ms-stats-datatables', 'https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css', array(), '1.13.8' );
-		wp_enqueue_style( 'ms-stats-datatables-resp', 'https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css', array(), '2.5.0' );
+		wp_enqueue_style( 'ms-stats-datatables', 'https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css', array(), '2.0.8' );
+		wp_enqueue_style( 'ms-stats-datatables-resp', 'https://cdn.datatables.net/responsive/3.0.2/css/responsive.dataTables.min.css', array(), '3.0.2' );
 
 		wp_add_inline_style(
 			$this->plugin_name,
@@ -92,13 +92,20 @@ class Ms_Stats_For_Bridge_Project_Admin {
 			.ms-stats-card{background:#fff;border:1px solid #dcdcde;border-left:4px solid {$primary};border-radius:6px;padding:20px 28px;min-width:160px;flex:1;box-shadow:0 1px 3px rgba(0,0,0,.06);}
 			.ms-stats-card-value{font-size:2.4em;font-weight:700;color:{$primary};line-height:1;}
 			.ms-stats-card-label{color:#50575e;margin-top:8px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;}
-			.ms-stats-tab-panel table.ms-stats-table thead th,.ms-stats-tab-panel table.ms-stats-table thead td{background:{$primary}!important;color:#fff!important;border-color:rgba(255,255,255,.15)!important;font-weight:600;}
-			.ms-stats-tab-panel table.ms-stats-table thead .sorting::before,.ms-stats-tab-panel table.ms-stats-table thead .sorting::after,.ms-stats-tab-panel table.ms-stats-table thead .sorting_asc::before,.ms-stats-tab-panel table.ms-stats-table thead .sorting_asc::after,.ms-stats-tab-panel table.ms-stats-table thead .sorting_desc::before,.ms-stats-tab-panel table.ms-stats-table thead .sorting_desc::after{opacity:.5;}
-			.ms-stats-tab-panel table.ms-stats-table tbody tr:hover td{background:rgba(56,91,206,.04)!important;}
-			.ms-stats-tab-panel .dataTables_paginate .paginate_button.current,.ms-stats-tab-panel .dataTables_paginate .paginate_button.current:hover{background:{$primary}!important;border-color:{$primary}!important;color:#fff!important;border-radius:4px;}
-			.ms-stats-tab-panel .dataTables_paginate .paginate_button:hover{background:rgba(56,91,206,.1)!important;border-color:{$primary}!important;color:{$primary}!important;border-radius:4px;}
-			.ms-stats-tab-panel .dataTables_filter input{border:1px solid #c3c4c7;border-radius:4px;padding:5px 10px;margin-left:6px;}
-			.ms-stats-tab-panel .dataTables_length select{border:1px solid #c3c4c7;border-radius:4px;padding:4px 8px;}
+			.ms-stats-tab-panel table.ms-stats-table{border-collapse:collapse;width:100%!important;border-radius:6px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+			.ms-stats-tab-panel table.ms-stats-table thead th,.ms-stats-tab-panel table.ms-stats-table thead td{background:{$primary}!important;color:#fff!important;border:none!important;font-weight:600;padding:10px 14px!important;font-size:12px;text-transform:uppercase;letter-spacing:.4px;}
+			.ms-stats-tab-panel table.ms-stats-table thead th.dt-orderable-asc .dt-column-order::before,.ms-stats-tab-panel table.ms-stats-table thead th.dt-orderable-desc .dt-column-order::after{opacity:.6;}
+			.ms-stats-tab-panel table.ms-stats-table tbody td{padding:9px 14px!important;border-bottom:1px solid #f0f0f0!important;font-size:13px;}
+			.ms-stats-tab-panel table.ms-stats-table tbody tr:nth-child(even) td{background:#f9fafb;}
+			.ms-stats-tab-panel table.ms-stats-table tbody tr:hover td{background:{$primary}10!important;}
+			.ms-stats-tab-panel .dt-layout-row{margin-bottom:12px;}
+			.ms-stats-tab-panel .dt-search input{border:1px solid #c3c4c7;border-radius:6px;padding:6px 12px;font-size:13px;outline:none;transition:border-color .2s;}
+			.ms-stats-tab-panel .dt-search input:focus{border-color:{$primary};}
+			.ms-stats-tab-panel .dt-length select{border:1px solid #c3c4c7;border-radius:6px;padding:5px 10px;font-size:13px;}
+			.ms-stats-tab-panel .dt-paging .dt-paging-button{border-radius:4px!important;border:1px solid #dcdcde!important;background:#fff!important;color:#50575e!important;padding:4px 10px!important;margin:0 2px!important;font-size:12px!important;cursor:pointer;}
+			.ms-stats-tab-panel .dt-paging .dt-paging-button.current,.ms-stats-tab-panel .dt-paging .dt-paging-button.current:hover{background:{$primary}!important;border-color:{$primary}!important;color:#fff!important;}
+			.ms-stats-tab-panel .dt-paging .dt-paging-button:hover{background:{$primary}18!important;border-color:{$primary}!important;color:{$primary}!important;}
+			.ms-stats-tab-panel .dt-info{font-size:12px;color:#50575e;}
 			.ms-stats-bar-wrap{display:flex;align-items:center;gap:8px;}
 			.ms-stats-bar{background:#f0f0f0;border-radius:3px;width:80px;height:10px;overflow:hidden;flex-shrink:0;}
 			.ms-stats-bar-fill{height:100%;border-radius:3px;}
@@ -119,11 +126,24 @@ class Ms_Stats_For_Bridge_Project_Admin {
 
 		$stm     = get_option( 'stm_lms_settings', array() );
 		$primary = ! empty( $stm['main_color'] ) ? sanitize_hex_color( $stm['main_color'] ) : '#385bce';
-		$logo    = ! empty( $stm['print_page_logo'] ) ? esc_url_raw( $stm['print_page_logo'] ) : '';
+
+		// Logo: try MasterStudy PRO setting → WP custom logo → empty.
+		$logo = '';
+		if ( ! empty( $stm['print_page_logo'] ) ) {
+			$logo = esc_url_raw( $stm['print_page_logo'] );
+		} else {
+			$custom_logo_id = get_theme_mod( 'custom_logo' );
+			if ( $custom_logo_id ) {
+				$logo_src = wp_get_attachment_image_src( $custom_logo_id, 'medium' );
+				if ( $logo_src ) {
+					$logo = esc_url_raw( $logo_src[0] );
+				}
+			}
+		}
 
 		wp_enqueue_script( 'jquery-ui-datepicker' );
-		wp_enqueue_script( 'ms-stats-datatables', 'https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js', array( 'jquery' ), '1.13.8', true );
-		wp_enqueue_script( 'ms-stats-datatables-resp', 'https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js', array( 'ms-stats-datatables' ), '2.5.0', true );
+		wp_enqueue_script( 'ms-stats-datatables', 'https://cdn.datatables.net/2.0.8/js/dataTables.min.js', array( 'jquery' ), '2.0.8', true );
+		wp_enqueue_script( 'ms-stats-datatables-resp', 'https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.min.js', array( 'ms-stats-datatables' ), '3.0.2', true );
 		wp_enqueue_script( 'ms-stats-jspdf', 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', array(), '2.5.1', true );
 		wp_enqueue_script( 'ms-stats-autotable', 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js', array( 'ms-stats-jspdf' ), '3.8.2', true );
 		wp_enqueue_script(
