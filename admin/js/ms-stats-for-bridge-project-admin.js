@@ -48,6 +48,24 @@
 			: [ 56, 91, 206 ];
 	}
 
+	async function loadFont( doc ) {
+		if ( ! cfg.fontUrl ) { return; }
+		try {
+			var resp   = await fetch( cfg.fontUrl );
+			var buffer = await resp.arrayBuffer();
+			var bytes  = new Uint8Array( buffer );
+			var binary = '';
+			for ( var i = 0; i < bytes.length; i++ ) {
+				binary += String.fromCharCode( bytes[ i ] );
+			}
+			var b64 = btoa( binary );
+			doc.addFileToVFS( 'DejaVuSans.ttf', b64 );
+			doc.addFont( 'DejaVuSans.ttf', 'DejaVuSans', 'normal' );
+			doc.addFont( 'DejaVuSans.ttf', 'DejaVuSans', 'bold' );
+			doc.setFont( 'DejaVuSans' );
+		} catch ( e ) { /* font load failed, fall back to Helvetica */ }
+	}
+
 	function loadImg( url ) {
 		return new Promise( function ( resolve, reject ) {
 			var img         = new Image();
@@ -63,6 +81,9 @@
 		var doc   = new window.jspdf.jsPDF( 'l', 'mm', 'a4' );
 		var pageW = doc.internal.pageSize.getWidth();
 		var pageH = doc.internal.pageSize.getHeight();
+
+		/* embed Unicode font so diacritics and Greek render correctly */
+		await loadFont( doc );
 
 		/* coloured header bar */
 		doc.setFillColor( rgb[0], rgb[1], rgb[2] );
@@ -90,13 +111,15 @@
 		doc.setFontSize( 8 );  doc.setFont( undefined, 'normal' );
 		doc.text( new Date().toLocaleDateString( 'en-GB' ), pageW - 10, 20, { align: 'right' } );
 
+		var uniFont = cfg.fontUrl ? 'DejaVuSans' : 'helvetica';
+
 		/* table */
 		doc.autoTable( {
 			html:          '#' + tableId,
 			startY:        32,
 			theme:         'grid',
-			headStyles:    { fillColor: rgb, textColor: [ 255, 255, 255 ], fontStyle: 'bold', fontSize: 8.5 },
-			bodyStyles:    { fontSize: 8, textColor: [ 40, 40, 40 ] },
+			headStyles:    { fillColor: rgb, textColor: [ 255, 255, 255 ], fontStyle: 'normal', fontSize: 8.5, font: uniFont },
+			bodyStyles:    { fontSize: 8, textColor: [ 40, 40, 40 ], font: uniFont },
 			alternateRowStyles: { fillColor: [ 246, 247, 249 ] },
 			tableLineColor:  [ 210, 212, 216 ],
 			tableLineWidth:  0.15,

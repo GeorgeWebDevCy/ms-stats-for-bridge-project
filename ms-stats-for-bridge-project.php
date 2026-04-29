@@ -16,7 +16,7 @@
  * Plugin Name:       MS Stats For Bridge Project
  * Plugin URI:        https://www.georgenicolaou.me/plugins/ms-stats-for-bridge-project
  * Description:       This plugin create a menu in admin with stats and reports for Master Study
- * Version:           2.0.0
+ * Version:           2.1.0
  * Author:            George Nicolaou
  * Author URI:        https://www.georgenicolaou.me/
  * License:           GPL-2.0+
@@ -46,7 +46,7 @@ $ms_stats_update_checker->setBranch( 'main' );
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'MS_STATS_FOR_BRIDGE_PROJECT_VERSION', '2.0.0' );
+define( 'MS_STATS_FOR_BRIDGE_PROJECT_VERSION', '2.1.0' );
 
 /**
  * The code that runs during plugin activation.

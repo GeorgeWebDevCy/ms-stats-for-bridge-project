@@ -142,6 +142,7 @@ class Ms_Stats_For_Bridge_Project_Admin {
 				'logo'         => $logo,
 				'siteName'     => get_bloginfo( 'name' ),
 				'pluginTitle'  => 'MS Stats — Bridge Project',
+				'fontUrl'      => plugin_dir_url( __FILE__ ) . 'fonts/DejaVuSans.ttf',
 			)
 		);
 	}
