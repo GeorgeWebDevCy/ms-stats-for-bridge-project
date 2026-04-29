@@ -96,8 +96,10 @@ class Ms_Stats_For_Bridge_Project_Admin {
 			.ms-stats-tab-panel table.ms-stats-table{border-collapse:collapse;width:100%!important;}
 			.ms-stats-tab-panel table.ms-stats-table thead{display:table-header-group!important;visibility:visible!important;}
 			.ms-stats-tab-panel table.ms-stats-table thead tr{display:table-row!important;}
-			.ms-stats-tab-panel table.ms-stats-table thead th,.ms-stats-tab-panel table.ms-stats-table thead td{display:table-cell!important;visibility:visible!important;background:#f3f4f6!important;color:#111827!important;border:none!important;border-bottom:2px solid {$primary}!important;font-weight:700;padding:10px 14px!important;font-size:12px;text-transform:uppercase;letter-spacing:.4px;}
-			.ms-stats-tab-panel table.ms-stats-table thead th.dt-orderable-asc .dt-column-order::before,.ms-stats-tab-panel table.ms-stats-table thead th.dt-orderable-desc .dt-column-order::after{opacity:.6;}
+			.ms-stats-tab-panel table.ms-stats-table thead th,.ms-stats-tab-panel table.ms-stats-table thead td{display:table-cell!important;visibility:visible!important;background:#f3f4f6!important;color:#111827!important;border-top:none!important;border-left:none!important;border-right:none!important;border-bottom:2px solid {$primary}!important;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.4px;vertical-align:bottom;}
+			.ms-stats-tab-panel table.ms-stats-table thead th.dt-orderable-asc,.ms-stats-tab-panel table.ms-stats-table thead th.dt-orderable-desc,.ms-stats-tab-panel table.ms-stats-table thead th.dt-ordering-asc,.ms-stats-tab-panel table.ms-stats-table thead th.dt-ordering-desc{padding-right:26px;}
+			.ms-stats-tab-panel table.ms-stats-table thead .dt-column-order{opacity:.5;}
+			.ms-stats-tab-panel table.ms-stats-table thead th.dt-ordering-asc .dt-column-order,.ms-stats-tab-panel table.ms-stats-table thead th.dt-ordering-desc .dt-column-order{opacity:1;color:{$primary};}
 			.ms-stats-tab-panel table.ms-stats-table tbody td{display:table-cell!important;padding:9px 14px!important;border-bottom:1px solid #f0f0f0!important;font-size:13px;}
 			.ms-stats-tab-panel table.ms-stats-table tbody tr:nth-child(even) td{background:#f9fafb;}
 			.ms-stats-tab-panel table.ms-stats-table tbody tr:hover td{background:{$primary}10!important;}
